@@ -7,22 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F429102A2095321300F45336 /* LoginScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42910292095321300F45336 /* LoginScreenViewController.swift */; };
+		F429102A2095321300F45336 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42910292095321300F45336 /* LoginViewController.swift */; };
 		F432C0772092D7A000876291 /* DateLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = F432C0762092D7A000876291 /* DateLogic.swift */; };
 		F442E9DB2092B5FD00784053 /* Season.swift in Sources */ = {isa = PBXBuildFile; fileRef = F442E9DA2092B5FD00784053 /* Season.swift */; };
 		F4F851AC20927083003591AC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851AB20927083003591AC /* AppDelegate.swift */; };
 		F4F851B120927083003591AC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4F851AF20927083003591AC /* Main.storyboard */; };
 		F4F851B320927083003591AC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4F851B220927083003591AC /* Assets.xcassets */; };
 		F4F851B620927083003591AC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4F851B420927083003591AC /* LaunchScreen.storyboard */; };
-		F4F851C4209273A8003591AC /* Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851C3209273A8003591AC /* Show.swift */; };
+		F4F851C4209273A8003591AC /* Series.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851C3209273A8003591AC /* Series.swift */; };
 		F4F851C6209276B8003591AC /* Episode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851C5209276B8003591AC /* Episode.swift */; };
-		F4F851CA20927EF2003591AC /* ShowModelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851C920927EF2003591AC /* ShowModelController.swift */; };
+		F4F851CA20927EF2003591AC /* TelevisionModelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851C920927EF2003591AC /* TelevisionModelController.swift */; };
 		F4F851CC20928372003591AC /* ShowTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851CB20928372003591AC /* ShowTableViewController.swift */; };
 		F4F851CE20928481003591AC /* ShowTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851CD20928481003591AC /* ShowTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		F42910292095321300F45336 /* LoginScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginScreenViewController.swift; sourceTree = "<group>"; };
+		F42910292095321300F45336 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		F432C0762092D7A000876291 /* DateLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateLogic.swift; sourceTree = "<group>"; };
 		F442E9DA2092B5FD00784053 /* Season.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Season.swift; sourceTree = "<group>"; };
 		F4F851A820927083003591AC /* PersonalShowReleaseGuide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PersonalShowReleaseGuide.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -31,9 +31,9 @@
 		F4F851B220927083003591AC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F4F851B520927083003591AC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F4F851B720927084003591AC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F4F851C3209273A8003591AC /* Show.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Show.swift; sourceTree = "<group>"; };
+		F4F851C3209273A8003591AC /* Series.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Series.swift; sourceTree = "<group>"; };
 		F4F851C5209276B8003591AC /* Episode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Episode.swift; sourceTree = "<group>"; };
-		F4F851C920927EF2003591AC /* ShowModelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowModelController.swift; sourceTree = "<group>"; };
+		F4F851C920927EF2003591AC /* TelevisionModelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelevisionModelController.swift; sourceTree = "<group>"; };
 		F4F851CB20928372003591AC /* ShowTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTableViewController.swift; sourceTree = "<group>"; };
 		F4F851CD20928481003591AC /* ShowTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -116,8 +116,8 @@
 		F4F851C0209272E8003591AC /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				F42910292095321300F45336 /* LoginScreenViewController.swift */,
 				F4F851CB20928372003591AC /* ShowTableViewController.swift */,
+				F42910292095321300F45336 /* LoginViewController.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -125,7 +125,7 @@
 		F4F851C1209272F0003591AC /* ModelControllers */ = {
 			isa = PBXGroup;
 			children = (
-				F4F851C920927EF2003591AC /* ShowModelController.swift */,
+				F4F851C920927EF2003591AC /* TelevisionModelController.swift */,
 				F432C0752092D69700876291 /* Logic */,
 			);
 			path = ModelControllers;
@@ -134,7 +134,7 @@
 		F4F851C2209272F7003591AC /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				F4F851C3209273A8003591AC /* Show.swift */,
+				F4F851C3209273A8003591AC /* Series.swift */,
 				F442E9DA2092B5FD00784053 /* Season.swift */,
 				F4F851C5209276B8003591AC /* Episode.swift */,
 			);
@@ -214,11 +214,11 @@
 			files = (
 				F442E9DB2092B5FD00784053 /* Season.swift in Sources */,
 				F4F851CE20928481003591AC /* ShowTableViewCell.swift in Sources */,
-				F429102A2095321300F45336 /* LoginScreenViewController.swift in Sources */,
-				F4F851C4209273A8003591AC /* Show.swift in Sources */,
+				F429102A2095321300F45336 /* LoginViewController.swift in Sources */,
+				F4F851C4209273A8003591AC /* Series.swift in Sources */,
 				F432C0772092D7A000876291 /* DateLogic.swift in Sources */,
 				F4F851C6209276B8003591AC /* Episode.swift in Sources */,
-				F4F851CA20927EF2003591AC /* ShowModelController.swift in Sources */,
+				F4F851CA20927EF2003591AC /* TelevisionModelController.swift in Sources */,
 				F4F851AC20927083003591AC /* AppDelegate.swift in Sources */,
 				F4F851CC20928372003591AC /* ShowTableViewController.swift in Sources */,
 			);

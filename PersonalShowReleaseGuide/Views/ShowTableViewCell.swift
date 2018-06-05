@@ -19,13 +19,14 @@ class ShowTableViewCell: UITableViewCell {
     
 
     // MARK: - Properties
-    var show: Show? {
+    var series: Series? {
         didSet {
             showAirYear()
+            
         }
     }
     
-    var season: SeasonArray? {
+    var currentSeason: Int? {
         didSet {
             showSeasonNumber()
         }
@@ -35,7 +36,7 @@ class ShowTableViewCell: UITableViewCell {
     // MARK: - Methods
     func showAirYear() {
         
-        guard let show = show else { return }
+        guard let show = series else { return }
         var year = ""
         var showAirYear = ""
         
@@ -52,16 +53,12 @@ class ShowTableViewCell: UITableViewCell {
             showAirYear = ""
         }
         
-        self.showTitleLabel.text = "\(show.title)\(showAirYear)"
+        self.showTitleLabel.text = "\(show.name)\(showAirYear)"
     }
     
     func showSeasonNumber() {
-        
-//        guard let season = season else { return }
-        
-//        let seasonNumberAndAirDates = DateLogic.shared.findClosestEpisodeDate()
-//
-//        self.showCurrentSeasonLabel.text = "\(seasonNumber)"
-        
+
+        guard let seasonNumber = self.currentSeason else { return }
+        self.showCurrentSeasonLabel.text = "\(seasonNumber)"
     }
 }

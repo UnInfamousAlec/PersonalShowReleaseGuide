@@ -8,21 +8,31 @@
 
 import Foundation
 
-// Based on https://api.themoviedb.org/3/search/tv?api_key=9d94523b28ef0a99fe43078ea391db1c&query=suits&language=en-US
+// Based on https://api.themoviedb.org/3/search/tv?api_key=1f76e7734a01ecc55ff5054b1d2a3e82&query=thrones&language=en-US
 
-struct ShowResults: Decodable {
-    let results: [Show]
+struct SeriesResults: Decodable {
+    let results: [Series]
 }
 
-struct Show: Decodable {
-    let title: String
+struct Series: Decodable {
+    let name: String
     let id: Int
     let pilotAirDate: String
+    let language: String
+    let overview: String
+    let voteCount: Int
+    let voteAverage: Double
+    let posterEndPoint: String?
     
     enum CodingKeys: String, CodingKey {
-        case title = "original_name"
+        case name
         case id
         case pilotAirDate = "first_air_date"
+        case language = "original_language"
+        case overview
+        case voteCount = "vote_count"
+        case voteAverage = "vote_average"
+        case posterEndPoint = "poster_path"
     }
 }
 

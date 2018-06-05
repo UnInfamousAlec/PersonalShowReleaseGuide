@@ -12,16 +12,38 @@ class ShowTableViewController: UITableViewController, UISearchBarDelegate {
 
     // MARK: - Outlets
     @IBOutlet weak var showSearchBar: UISearchBar!
-    
+    @IBOutlet weak var showSegmentedControl: UISegmentedControl!
     
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        showSearchBar.text = "Suits" // For Test/Mock purposes
+        showSearchBar.text = "Thrones" // For Test/Mock purposes
         DateLogic.shared.currentDate()
+        showSegmentedControl.layer.cornerRadius = 0
+        showSegmentedControl.layer.borderWidth = 1
     }
+    
+    
+    
+    // Tableview datasource
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return TelevisionModelController.shared.series.count
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as? ShowTableViewCell else { return UITableViewCell() }
+        let series = TelevisionModelController.shared.series[indexPath.row]
+        let currentSeason = TelevisionModelController.shared.currentSeason[indexPath.row]
+        cell.series = series
+        cell.currentSeason = currentSeason
+        return cell
+    }
+    
+//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        <#code#>
+//    }
     
     
     // MARK: - Methods
@@ -30,46 +52,37 @@ class ShowTableViewController: UITableViewController, UISearchBarDelegate {
         guard let searchTerm = searchBar.text, searchTerm.count > 0 else { return }
         
         // Get array of Show objects to pass to the cell
-        ShowModelController.shared.fetchShows(by: searchTerm) { (success) in
+        TelevisionModelController.shared.fetchSeries(by: searchTerm) { (success) in
             
             if success {
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    searchBar.text = ""
+                for _ in TelevisionModelController.shared.series {
                     
-                    ShowModelController.shared.repeatFetchSeasonIDs(completion: { (success) in
-//                        let airDates = ShowModelController.shared.
-//                        print("airDates: \(airDates)")
+                    TelevisionModelController.shared.fetchSeasons(completion: { (success) in
                         
                         if success {
                             DispatchQueue.main.async {
-                                DateLogic.shared.findClosestEpisodeDate()
+                                searchBar.text = ""
                                 self.tableView.reloadData()
                             }
+                        }
+                        
+                        if !success {
+                            print("Error fetching seasons")
                         }
                     })
                 }
             }
+            
+            if !success {
+                print("Error fetching shows")
+            }
         }
-    }
-    
-    // Tableview datasource
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return ShowModelController.shared.shows.count
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as? ShowTableViewCell else { return UITableViewCell() }
-        let show = ShowModelController.shared.shows[indexPath.row]
-        cell.show = show
-//        cell.season = season
-        return cell
     }
 }
 
 //// Change color on a label
 //func showTitle() {
-//    (Label).transition(with: (Label, duration: 5, options: [.transitionCrossDissolve], animations: { self.(title).textcolor = UIView.blue})
+//    (Label).transition(with: (Label, duration: 5, options: [.transitionCrossDissolve], animations: { self.(name).textcolor = UIView.blue})
 //}
 //
 //// Spins label

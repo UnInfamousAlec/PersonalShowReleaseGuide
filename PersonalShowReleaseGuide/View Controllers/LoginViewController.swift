@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LoginScreenViewController: UIViewController {
+class LoginViewController: UIViewController {
     
     @IBOutlet weak var loginImageView: UIImageView!
     

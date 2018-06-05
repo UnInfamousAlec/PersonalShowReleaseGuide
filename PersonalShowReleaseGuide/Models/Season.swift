@@ -8,21 +8,29 @@
 
 import Foundation
 
-// Based on https://api.themoviedb.org/3/tv/37680?api_key=9d94523b28ef0a99fe43078ea391db1c&language=en-US
+// Based on https://api.themoviedb.org/3/tv/37680?api_key=1f76e7734a01ecc55ff5054b1d2a3e82&language=en-US
 
-struct Series: Decodable {
-    let seasons: [SeasonArray]
+struct SeriesForSeason: Decodable {
+    let name: String
+    let inProduction: Bool
+    let status: String
+    let seasons: [Season]
     
     enum CodingKeys: String, CodingKey {
+        case name = "original_name"
+        case inProduction = "in_production"
+        case status
         case seasons
     }
 }
 
-struct SeasonArray: Decodable {
+class Season: Decodable {
+    let seasonName: String
     let seasonNumber: Int
-    let seasonAirDate: String?
+    var seasonAirDate: String?
     
     enum CodingKeys: String, CodingKey {
+        case seasonName = "name"
         case seasonNumber = "season_number"
         case seasonAirDate = "air_date"
     }

@@ -15,7 +15,7 @@ class DateLogic {
     
     
     // MARK: - Properties
-    let season = ShowModelController.shared.season
+    var season: [Season] = []
     var today = ""
     
     
@@ -23,29 +23,36 @@ class DateLogic {
     func currentDate() {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .short
-        dateFormatter.dateFormat = "YYYY-MM-d"
+        dateFormatter.dateFormat = "YYYY-MM-dd"
         let today = dateFormatter.string(from: Date())
         self.today = today
         print("Today's Date is: \(today)")
     }
     
     // Iterates through [Season] to get the most recent season then returns the season number
-    func findClosestEpisodeDate() { // -> [Int : String] {
-        var closestSeason = "1800-01-01"
-        let seasonNumbers = season.compactMap( {$0.seasonNumber} )
-        let seasonAirDates = season.compactMap( {$0.seasonAirDate} )
-        var seasonDictionary: [Int : String] = [:]
+    func findCurrentSeason() -> Int {
+        season = TelevisionModelController.shared.seasons
+//        var closestSeason = "1800-01-01"
+        var closestSeasonNumber = 0
+        let seasonNumbers = season.compactMap( {$0.seasonNumber} ).reversed()
+        let seasonAirDates = season.compactMap( {$0.seasonAirDate} ).reversed()
+        if seasonNumbers.count != seasonAirDates.count {
+            print("HUGE ISSUE! seasonNumbers & seasonAirDates are somehow not the same amount! \(#function)")
+        }
         
+        // Create season number to date dictionary
         for (seasonNumber, seasonAirDate) in zip(seasonNumbers, seasonAirDates) {
-            if seasonAirDate <= today {
-                if seasonAirDate > closestSeason {
-                    closestSeason = seasonAirDate
-                    seasonDictionary = [seasonNumber : seasonAirDate]
-                    print("Season Dictionary: \(seasonDictionary)")
-                }
+            print("\(seasonNumber) - \(seasonAirDate)")
+            if seasonAirDate >= today {
+//                closestSeason = seasonAirDate
+                closestSeasonNumber = seasonNumber
+                break
+            } else if seasonAirDate < today {
+//                closestSeason = seasonAirDate
+                closestSeasonNumber = seasonNumber
+                break
             }
         }
-        print("Closest date to current: \(closestSeason)")
-//        return seasonDictionary
+        return closestSeasonNumber
     }
 }
