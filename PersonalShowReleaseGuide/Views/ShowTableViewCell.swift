@@ -32,6 +32,12 @@ class ShowTableViewCell: UITableViewCell {
         }
     }
     
+    var currentEpisode: Int? {
+        didSet {
+            showEpisodeNumber()
+        }
+    }
+    
     
     // MARK: - Methods
     func showAirYear() {
@@ -60,5 +66,16 @@ class ShowTableViewCell: UITableViewCell {
 
         guard let seasonNumber = self.currentSeason else { return }
         self.showCurrentSeasonLabel.text = "\(seasonNumber)"
+    }
+    
+    func showEpisodeNumber() {
+        
+        guard let episodeNumber = self.currentEpisode else { return }
+        self.showNextEpisodeLabel.text = "\(episodeNumber)"
+    }
+    
+    func showNextEpisodeAirDate() {
+        
+        
     }
 }

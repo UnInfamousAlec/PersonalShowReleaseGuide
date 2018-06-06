@@ -67,25 +67,18 @@
                                             </segments>
                                             <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </segmentedControl>
-                                        <searchBar contentMode="redraw" placeholder="Enter Show Name" translatesAutoresizingMaskIntoConstraints="NO" id="Zcl-aP-glm">
+                                        <searchBar contentMode="redraw" placeholder="Enter Series Name" translatesAutoresizingMaskIntoConstraints="NO" id="5YA-MU-0Gw">
                                             <rect key="frame" x="0.0" y="28" width="320" height="50"/>
-                                            <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <color key="barTintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="search"/>
-                                            <scopeButtonTitles>
-                                                <string>Title</string>
-                                                <string>Title</string>
-                                            </scopeButtonTitles>
+                                            <textInputTraits key="textInputTraits"/>
                                             <connections>
-                                                <outlet property="delegate" destination="udi-ME-Igh" id="pQE-0H-yKI"/>
+                                                <outlet property="delegate" destination="udi-ME-Igh" id="aiH-b0-7gj"/>
                                             </connections>
                                         </searchBar>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="am2-kW-5d7" firstAttribute="leading" secondItem="t7X-gh-rC1" secondAttribute="leading" id="2yo-i0-jPe"/>
-                                        <constraint firstAttribute="trailing" secondItem="Zcl-aP-glm" secondAttribute="trailing" id="Spf-uv-yFL"/>
-                                        <constraint firstAttribute="trailing" secondItem="am2-kW-5d7" secondAttribute="trailing" id="u2k-FZ-Y1t"/>
-                                        <constraint firstItem="Zcl-aP-glm" firstAttribute="leading" secondItem="t7X-gh-rC1" secondAttribute="leading" id="zsI-1S-bXM"/>
+                                        <constraint firstItem="5YA-MU-0Gw" firstAttribute="width" secondItem="t7X-gh-rC1" secondAttribute="width" id="Vod-Av-Pcc"/>
+                                        <constraint firstItem="am2-kW-5d7" firstAttribute="width" secondItem="t7X-gh-rC1" secondAttribute="width" id="qHS-TE-Oqv"/>
                                     </constraints>
                                 </stackView>
                             </subviews>
@@ -296,7 +289,7 @@
                     </tableView>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="showSearchBar" destination="Zcl-aP-glm" id="hzr-ZW-BrR"/>
+                        <outlet property="showSearchBar" destination="5YA-MU-0Gw" id="vLM-b0-AqK"/>
                         <outlet property="showSegmentedControl" destination="am2-kW-5d7" id="9l5-gl-IVT"/>
                     </connections>
                 </tableViewController>

@@ -16,6 +16,7 @@ class DateLogic {
     
     // MARK: - Properties
     var season: [Season] = []
+    var episode: [Episode] = []
     var today = ""
     
     
@@ -30,29 +31,54 @@ class DateLogic {
     }
     
     // Iterates through [Season] to get the most recent season then returns the season number
-    func findCurrentSeason() -> Int {
-        season = TelevisionModelController.shared.seasons
+    func findMostCurrentSeason() -> Int {
+        self.season = TelevisionModelController.shared.seasons
 //        var closestSeason = "1800-01-01"
-        var closestSeasonNumber = 0
-        let seasonNumbers = season.compactMap( {$0.seasonNumber} ).reversed()
-        let seasonAirDates = season.compactMap( {$0.seasonAirDate} ).reversed()
+        var mostCurrentSeason = 0
+        let seasonNumbers = self.season.compactMap( {$0.seasonNumber} ).reversed()
+        let seasonAirDates = self.season.compactMap( {$0.seasonAirDate} ).reversed()
+        
         if seasonNumbers.count != seasonAirDates.count {
             print("HUGE ISSUE! seasonNumbers & seasonAirDates are somehow not the same amount! \(#function)")
         }
         
         // Create season number to date dictionary
         for (seasonNumber, seasonAirDate) in zip(seasonNumbers, seasonAirDates) {
-            print("\(seasonNumber) - \(seasonAirDate)")
+            print("\(seasonNumber) - \(seasonAirDate)\n")
             if seasonAirDate >= today {
 //                closestSeason = seasonAirDate
-                closestSeasonNumber = seasonNumber
+                mostCurrentSeason = seasonNumber
                 break
             } else if seasonAirDate < today {
 //                closestSeason = seasonAirDate
-                closestSeasonNumber = seasonNumber
+                mostCurrentSeason = seasonNumber
                 break
             }
         }
-        return closestSeasonNumber
+        return mostCurrentSeason
+    }
+    
+    func findMostCurrentEpisode() -> Int {
+        self.episode = TelevisionModelController.shared.episodes
+        var mostCurrentEpisode = 0
+        let episodeNumbers = self.episode.compactMap( {$0.episodeNumber} ).reversed()
+        let episodeAirDates = self.episode.compactMap( { $0.episodeAirDate} ).reversed()
+        
+        if episodeNumbers.count != episodeAirDates.count {
+            print("HUGE ISSUE! episodeNumbers & episodeAirDates are somehow not the same amount! \(#function)")
+        }
+        
+        for (episodeNumber, episodeAirDate) in zip(episodeNumbers, episodeAirDates) {
+            print("\(episodeNumber) - \(episodeAirDate)\n")
+            if episodeAirDate >= today {
+                mostCurrentEpisode = episodeNumber
+                break
+            } else if episodeAirDate < today {
+                mostCurrentEpisode = episodeNumber
+                break
+            }
+        }
+        
+        return mostCurrentEpisode
     }
 }

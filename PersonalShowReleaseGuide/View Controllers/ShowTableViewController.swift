@@ -19,14 +19,67 @@ class ShowTableViewController: UITableViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        showSearchBar.text = "Thrones" // For Test/Mock purposes
         DateLogic.shared.currentDate()
         showSegmentedControl.layer.cornerRadius = 0
         showSegmentedControl.layer.borderWidth = 1
+        showSearchBar.text = "Thrones" // For Test/Mock purposes
     }
     
     
-    
+    // MARK: - Methods
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+
+        guard let searchTerm = searchBar.text, searchTerm.count > 0 else { return }
+
+        // Get array of Show objects to pass to the cell
+        TelevisionModelController.shared.fetchSeries(by: searchTerm) { (success) in
+
+            if success {
+                
+                let seriesResultsCount = (TelevisionModelController.shared.series.count - 1)
+                for number in 0...seriesResultsCount {
+                    
+                    let seriesID = TelevisionModelController.shared.seriesIDs[number]
+                    
+                    TelevisionModelController.shared.fetchSeasons(withID: seriesID, completion: { (success) in
+                        
+                        if success {
+                            
+                            let tvSeriesIDs = TelevisionModelController.shared.seriesIDs
+                            let seriesID = TelevisionModelController.shared.seriesIDs[number]
+                            
+                            let tvSeasonNumbers = TelevisionModelController.shared.currentSeason
+                            let seasonNumber = TelevisionModelController.shared.currentSeason[number]
+                            
+                            TelevisionModelController.shared.fetchEpisodes(withID: seriesID, andSeason: seasonNumber, completion: { (success) in
+                                
+                                if success {
+                                    DispatchQueue.main.async {
+                                        //                                            searchBar.text = ""
+                                        self.tableView.reloadData()
+                                    }
+                                }
+                                
+                                if !success {
+                                    print("Error fetching episodes")
+                                }
+                            })
+                        }
+
+                        if !success {
+                            print("Error fetching seasons")
+                        }
+                    })
+                }
+
+                if !success {
+                    print("Error fetching shows")
+                }
+            }
+        }
+    }
+
+
     // Tableview datasource
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return TelevisionModelController.shared.series.count
@@ -34,50 +87,22 @@ class ShowTableViewController: UITableViewController, UISearchBarDelegate {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as? ShowTableViewCell else { return UITableViewCell() }
-        let series = TelevisionModelController.shared.series[indexPath.row]
-        let currentSeason = TelevisionModelController.shared.currentSeason[indexPath.row]
-        cell.series = series
-        cell.currentSeason = currentSeason
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
+            let series = TelevisionModelController.shared.series[indexPath.row]
+            let cs = TelevisionModelController.shared.currentSeason
+            let currentSeason = TelevisionModelController.shared.currentSeason[indexPath.row]
+            let ce = TelevisionModelController.shared.currentEpisode
+                    let currentEpisode = TelevisionModelController.shared.currentEpisode[indexPath.row]
+            cell.series = series
+            cell.currentSeason = currentSeason
+            cell.currentEpisode = currentEpisode
+        }
         return cell
     }
-    
-//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        <#code#>
-//    }
-    
-    
-    // MARK: - Methods
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        
-        guard let searchTerm = searchBar.text, searchTerm.count > 0 else { return }
-        
-        // Get array of Show objects to pass to the cell
-        TelevisionModelController.shared.fetchSeries(by: searchTerm) { (success) in
-            
-            if success {
-                for _ in TelevisionModelController.shared.series {
-                    
-                    TelevisionModelController.shared.fetchSeasons(completion: { (success) in
-                        
-                        if success {
-                            DispatchQueue.main.async {
-                                searchBar.text = ""
-                                self.tableView.reloadData()
-                            }
-                        }
-                        
-                        if !success {
-                            print("Error fetching seasons")
-                        }
-                    })
-                }
-            }
-            
-            if !success {
-                print("Error fetching shows")
-            }
-        }
-    }
+
+    //    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    //        <#code#>
+    //    }
 }
 
 //// Change color on a label

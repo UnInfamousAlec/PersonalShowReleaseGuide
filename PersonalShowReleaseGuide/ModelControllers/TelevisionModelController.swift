@@ -29,14 +29,16 @@ class TelevisionModelController {
     // Get list of series' from search
     func fetchSeries(by searchTerm: String, completion: @escaping(Bool) -> Void) {
         currentSeason.removeAll()
-        let queries = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "query" : "\(searchTerm)", "language" : "en-US"]
-        let requestURL = baseShowURL.withQueries(queries)!
-        print("\nRequestedURL: \(requestURL)\n")
+        currentEpisode.removeAll()
         
-        URLSession.shared.dataTask(with: requestURL) { (data, response, error) in
+        let queries = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "query" : "\(searchTerm)", "language" : "en-US"]
+        let requestSeriesURL = baseShowURL.withQueries(queries)!
+        print("\nRequested Series URL: \(requestSeriesURL)\n")
+        
+        URLSession.shared.dataTask(with: requestSeriesURL) { (data, response, error) in
             
             if let error = error {
-                print("Error with fetch request: \(error) - \(error.localizedDescription)\n")
+                print("Error with series fetch request: \(error) - \(error.localizedDescription)\n")
                 completion(false)
                 return
             }
@@ -50,15 +52,15 @@ class TelevisionModelController {
                 
                 do {
                     let jsonDecoder = JSONDecoder()
-                    let showDictionary = try jsonDecoder.decode(SeriesResults.self, from: data)
-                    let shows = showDictionary.results.compactMap( {$0} )
+                    let seriesDictionary = try jsonDecoder.decode(SeriesResults.self, from: data)
+                    let shows = seriesDictionary.results.compactMap( {$0} )
                     //print("Shows dictionary: \(showDictionary.results)\n")
                     self.series = shows
                     self.removeNonEnglishFromShow()
                     self.seriesIDs = self.series.map{$0.id}
                     completion(true)
                 } catch let error {
-                    print("Error handling data: \(error) - \(error.localizedDescription)\n")
+                    print("Error handling series data: \(error) - \(error.localizedDescription)\n")
                     completion(false)
                     return
                 }
@@ -68,49 +70,49 @@ class TelevisionModelController {
     }
     
     // Fetch Series Seasons
-    func fetchSeasons(completion: @escaping(Bool) -> Void) {
-        
-        guard let seriesID = self.seriesIDs.first else { return }
-        seriesIDs.remove(at: 0)
-        
-        let baseShowIDURL = "https://api.themoviedb.org/3/tv/"
-        let midURL = "\(seriesID)" + "?"
+    func fetchSeasons(withID seriesID: Int, completion: @escaping(Bool) -> Void) {
+                
+        let baseSeasonURL = "https://api.themoviedb.org/3/tv/"
+        let midSeasonURL = "\(seriesID)" + "?"
         let queries = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "language" : "en-US"]
         
-        let seriesURL = URL(string: baseShowIDURL + "\(midURL)")!.withQueries(queries)!
-        print("\nRequestedSeasonURL: \(seriesURL)\n")
+        let seasonURL = URL(string: baseSeasonURL + midSeasonURL)!.withQueries(queries)!
+        print("Requested Season URL: \(seasonURL) for Series: \(seriesID)\n")
         
-        URLSession.shared.dataTask(with: seriesURL) { (data, response, error) in
+        URLSession.shared.dataTask(with: seasonURL) { (data, response, error) in
             
             if let error = error {
-                print("Error with fetch request: \(error) - \(error.localizedDescription)\n")
+                print("Error with season fetch request: \(error) - \(error.localizedDescription)\n")
                 completion(false)
                 return
             }
             
 //            if let response = response {
-//                print("TMDB Response: \(response)\n")
+//                print("TMDB Season Response: \(response)\n")
 //                completion(false)
 //            }
             
             if let data = data {
-
                 do {
                     let jsonDecoder = JSONDecoder()
-                    let series = try jsonDecoder.decode(SeriesForSeason.self, from: data)
-                    let seasons = series.seasons.map({ (season) -> Season in
+                    let seasonDictionary = try jsonDecoder.decode(SeriesForSeason.self, from: data)
+                    let seasons = seasonDictionary.seasons.map({ (season) -> Season in
                         if season.seasonAirDate == nil {
                             season.seasonAirDate = ""
                         }
                         return season
-                    }) // Get this to turn nil into ""
-                    print("\nName: \(series.name)  In Production: \(series.inProduction)  Status: \(series.status)")
-                    seasons.forEach{ print( "\($0.seasonName, $0.seasonNumber, $0.seasonAirDate!)")}
+                    })
+                    
+                    // Print to console for debug
+                    print("Name: \(seasonDictionary.name)  In Production: \(seasonDictionary.inProduction)  Status: \(seasonDictionary.status)")
+                    seasons.forEach{ print("\($0.seasonName, $0.seasonNumber, $0.seasonAirDate!)")}
+                    
                     self.seasons = seasons
-                    self.currentSeason.append(DateLogic.shared.findCurrentSeason())
+                    self.currentSeason.append(DateLogic.shared.findMostCurrentSeason())
+                    print("\"Current\" Season Numbers: \(self.currentSeason)\n")
                     completion(true)
                 } catch let error {
-                    print("Error handling data: \(error) - \(error.localizedDescription)\n")
+                    print("Error handling season data: \(error) - \(error.localizedDescription)\n")
                     completion(false)
                     return
                 }
@@ -119,13 +121,51 @@ class TelevisionModelController {
         .resume()
     }
     
-//    // Fetch Season Episode Numbers
-//      //https://api.themoviedb.org/3/tv/37680/season/1?api_key=1f76e7734a01ecc55ff5054b1d2a3e82&language=en-US
-//    func fetchEpisodes(withID ID: Int, andSeason number: Int, completion: @escaping(Bool) -> Void) {
-//
-//        let baseShowIDURL = "https://api.themoviedb.org/3/tv/"
-//
-//    }
+    // Fetch Season Episode Numbers
+    func fetchEpisodes(withID seriesID: Int, andSeason seasonNumber: Int, completion: @escaping(Bool) -> Void) {
+        
+        let baseEpisodeURL = "https://api.themoviedb.org/3/tv/"
+        let midEpisodeURL = "\(seriesID)" + "/season/" + "\(seasonNumber)" + "?"
+        let queries = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "language" : "en-US"]
+        
+        let episodeURL = URL(string: baseEpisodeURL + midEpisodeURL)!.withQueries(queries)!
+        print("Requested Episode URL: \(episodeURL)\n")
+        
+        URLSession.shared.dataTask(with: episodeURL) { (data, response, error) in
+            
+            if let error = error {
+                print("Error with episode fetch request: \(error) - \(error.localizedDescription)")
+                completion(false)
+                return
+            }
+            
+//            if let response = response {
+//                print("TMDB Episode Response: \(response)\n")
+//                completion(false)
+//            }
+            
+            if let data = data {
+                do {
+                    let jsonDecoder = JSONDecoder()
+                    let episodeDictionary = try jsonDecoder.decode(SeasonForEpisode.self, from: data)
+                    let episodes = episodeDictionary.episodes.compactMap( {$0} )
+                    
+                    // Print to console for debug
+                    episodes.forEach{ print("\($0.name, $0.episodeNumber, $0.episodeAirDate)")}
+                    
+                    self.episodes = episodes
+                    self.currentEpisode.append(DateLogic.shared.findMostCurrentEpisode())
+                    print("\"Current\" Episode Numbers: \(self.currentEpisode)\n")
+                    completion(true)
+                } catch let error {
+                    print("Error handling episode data: \(error) - \(error.localizedDescription)\n")
+                    completion(false)
+                    return
+                }
+            }
+        }
+        .resume()
+    }
     
     func removeNonEnglishFromShow() {
         var nonEnglishIndexLocations: [Int] = []
