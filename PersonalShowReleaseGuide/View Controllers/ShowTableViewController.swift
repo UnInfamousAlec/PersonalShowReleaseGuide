@@ -40,38 +40,40 @@ class ShowTableViewController: UITableViewController, UISearchBarDelegate {
                 for number in 0...seriesResultsCount {
                     
                     let seriesID = TelevisionModelController.shared.seriesIDs[number]
-                    
+                     
                     TelevisionModelController.shared.fetchSeasons(withID: seriesID, completion: { (success) in
                         
                         if success {
-                            
-                            let tvSeriesIDs = TelevisionModelController.shared.seriesIDs
-                            let seriesID = TelevisionModelController.shared.seriesIDs[number]
-                            
-                            let tvSeasonNumbers = TelevisionModelController.shared.currentSeason
-                            let seasonNumber = TelevisionModelController.shared.currentSeason[number]
-                            
-                            TelevisionModelController.shared.fetchEpisodes(withID: seriesID, andSeason: seasonNumber, completion: { (success) in
+                            DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
                                 
-                                if success {
-                                    DispatchQueue.main.async {
-                                        //                                            searchBar.text = ""
-                                        self.tableView.reloadData()
-                                    }
-                                }
+                                let seriesID = TelevisionModelController.shared.seriesIDs[number]
+                                let seasonNumber = TelevisionModelController.shared.currentSeason[number]
                                 
-                                if !success {
-                                    print("Error fetching episodes")
-                                }
+                                    TelevisionModelController.shared.fetchEpisodes(withID: seriesID, andSeason: seasonNumber, completion: { (success) in
+                                        
+                                        if success {
+                                            DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+                                                
+                                                if number == seriesResultsCount {
+                                                    searchBar.text = ""
+                                                    self.tableView.reloadData()
+                                                }
+                                            })
+                                        }
+                                        
+                                        if !success {
+                                            print("Error fetching episodes")
+                                        }
+                                    })
                             })
                         }
-
+                        
                         if !success {
                             print("Error fetching seasons")
                         }
                     })
                 }
-
+                
                 if !success {
                     print("Error fetching shows")
                 }
@@ -87,12 +89,10 @@ class ShowTableViewController: UITableViewController, UISearchBarDelegate {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as? ShowTableViewCell else { return UITableViewCell() }
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
             let series = TelevisionModelController.shared.series[indexPath.row]
-            let cs = TelevisionModelController.shared.currentSeason
             let currentSeason = TelevisionModelController.shared.currentSeason[indexPath.row]
-            let ce = TelevisionModelController.shared.currentEpisode
-                    let currentEpisode = TelevisionModelController.shared.currentEpisode[indexPath.row]
+            let currentEpisode = TelevisionModelController.shared.currentEpisode[indexPath.row]
             cell.series = series
             cell.currentSeason = currentSeason
             cell.currentEpisode = currentEpisode

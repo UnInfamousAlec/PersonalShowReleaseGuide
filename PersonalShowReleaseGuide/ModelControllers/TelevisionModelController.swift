@@ -54,7 +54,7 @@ class TelevisionModelController {
                     let jsonDecoder = JSONDecoder()
                     let seriesDictionary = try jsonDecoder.decode(SeriesResults.self, from: data)
                     let shows = seriesDictionary.results.compactMap( {$0} )
-                    //print("Shows dictionary: \(showDictionary.results)\n")
+                    shows.forEach{ print("Series Results: \($0.name, $0.id, $0.pilotAirDate, $0.language)") }
                     self.series = shows
                     self.removeNonEnglishFromShow()
                     self.seriesIDs = self.series.map{$0.id}
@@ -105,7 +105,7 @@ class TelevisionModelController {
                     
                     // Print to console for debug
                     print("Name: \(seasonDictionary.name)  In Production: \(seasonDictionary.inProduction)  Status: \(seasonDictionary.status)")
-                    seasons.forEach{ print("\($0.seasonName, $0.seasonNumber, $0.seasonAirDate!)")}
+                    seasons.forEach{ print("\($0.seasonName, $0.seasonNumber, $0.seasonAirDate!)") }
                     
                     self.seasons = seasons
                     self.currentSeason.append(DateLogic.shared.findMostCurrentSeason())
@@ -131,11 +131,18 @@ class TelevisionModelController {
         let episodeURL = URL(string: baseEpisodeURL + midEpisodeURL)!.withQueries(queries)!
         print("Requested Episode URL: \(episodeURL)\n")
         
+//        if seasonNumber == 1000000 {
+//            self.currentEpisode.append(1000000)
+//            completion(true)
+//            return
+//        }
+        
         URLSession.shared.dataTask(with: episodeURL) { (data, response, error) in
             
             if let error = error {
-                print("Error with episode fetch request: \(error) - \(error.localizedDescription)")
-                completion(false)
+                self.currentEpisode.append(1000000)
+                print("Error with episode fetch request: \(error) - \(error.localizedDescription)"); print("\n")
+                completion(true)
                 return
             }
             
@@ -148,10 +155,15 @@ class TelevisionModelController {
                 do {
                     let jsonDecoder = JSONDecoder()
                     let episodeDictionary = try jsonDecoder.decode(SeasonForEpisode.self, from: data)
-                    let episodes = episodeDictionary.episodes.compactMap( {$0} )
+                    let episodes = episodeDictionary.episodes.map({ (episode) -> Episode in
+                        if episode.episodeAirDate == nil {
+                            episode.episodeAirDate = ""
+                        }
+                        return episode
+                    })
                     
                     // Print to console for debug
-                    episodes.forEach{ print("\($0.name, $0.episodeNumber, $0.episodeAirDate)")}
+                    episodes.forEach{ print("\($0.name, $0.episodeNumber, $0.episodeAirDate)") }
                     
                     self.episodes = episodes
                     self.currentEpisode.append(DateLogic.shared.findMostCurrentEpisode())

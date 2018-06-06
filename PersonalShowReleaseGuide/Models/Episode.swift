@@ -18,10 +18,10 @@ struct SeasonForEpisode: Decodable {
     }
 }
 
-struct Episode: Decodable {
+class Episode: Decodable {
     let name: String
     let episodeNumber: Int
-    let episodeAirDate: String
+    var episodeAirDate: String?
     let overview: String
     
     enum CodingKeys: String, CodingKey {

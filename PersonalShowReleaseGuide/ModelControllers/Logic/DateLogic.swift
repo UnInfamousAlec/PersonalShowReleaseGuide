@@ -27,14 +27,13 @@ class DateLogic {
         dateFormatter.dateFormat = "YYYY-MM-dd"
         let today = dateFormatter.string(from: Date())
         self.today = today
-        print("Today's Date is: \(today)")
+        print("Today's Date is: \(today)\n")
     }
     
     // Iterates through [Season] to get the most recent season then returns the season number
     func findMostCurrentSeason() -> Int {
         self.season = TelevisionModelController.shared.seasons
-//        var closestSeason = "1800-01-01"
-        var mostCurrentSeason = 0
+        var mostCurrentSeason = 1000000
         let seasonNumbers = self.season.compactMap( {$0.seasonNumber} ).reversed()
         let seasonAirDates = self.season.compactMap( {$0.seasonAirDate} ).reversed()
         
@@ -46,11 +45,9 @@ class DateLogic {
         for (seasonNumber, seasonAirDate) in zip(seasonNumbers, seasonAirDates) {
             print("\(seasonNumber) - \(seasonAirDate)\n")
             if seasonAirDate >= today {
-//                closestSeason = seasonAirDate
                 mostCurrentSeason = seasonNumber
                 break
             } else if seasonAirDate < today {
-//                closestSeason = seasonAirDate
                 mostCurrentSeason = seasonNumber
                 break
             }
@@ -58,9 +55,10 @@ class DateLogic {
         return mostCurrentSeason
     }
     
+    // Iterates through [Episode] to get the most recent episode then returns the season number
     func findMostCurrentEpisode() -> Int {
         self.episode = TelevisionModelController.shared.episodes
-        var mostCurrentEpisode = 0
+        var mostCurrentEpisode = 1000000
         let episodeNumbers = self.episode.compactMap( {$0.episodeNumber} ).reversed()
         let episodeAirDates = self.episode.compactMap( { $0.episodeAirDate} ).reversed()
         
