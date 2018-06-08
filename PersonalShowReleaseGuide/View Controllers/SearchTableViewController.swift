@@ -20,8 +20,8 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
     // MARK: - Properties
     var nonFetchedEpisodes = 0
     var seriesIDsUsed = 0
-    var seasonArrayOfDictionaries = [Int : Int]()
-    var episodeArrayOfDictionaries = [Int : Int]()
+//    var seasonArrayOfDictionaries = [Int : Int]()
+//    var episodeArrayOfDictionaries = [Int : Int]()
     
     
     // MARK: - Lifecycle
@@ -40,24 +40,21 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
 
         guard let searchTerm = searchBar.text, searchTerm.count > 0 else { return }
         
-        self.seasonArrayOfDictionaries.removeAll()
-        self.episodeArrayOfDictionaries.removeAll()
+//        self.seasonArrayOfDictionaries.removeAll()
+//        self.episodeArrayOfDictionaries.removeAll()
+        self.nonFetchedEpisodes = 0
+        self.seriesIDsUsed = 0
 
         // Get array of Show objects to pass to the cell
         TelevisionModelController.shared.fetchSeries(by: searchTerm) { (success) in
 
             if success {
-                
                 let seriesDictionaryKeys = TelevisionModelController.shared.seriesDictionary.keys
                 for seriesID in seriesDictionaryKeys {
-                    
-//                    self.seriesIDArray = TelevisionModelController.shared.seriesDictionary.values.map{$0.ID}
-//                    let seriesID = self.seriesIDArray[number]
                     
                     TelevisionModelController.shared.fetchSeasons(withID: seriesID, completion: { (success) in
                         
                         if success {
-
                             let seasonNumber = DateLogicController.shared.findMostCurrentSeason(seriesID: seriesID)
                             
 //                            DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
@@ -70,18 +67,14 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
                             TelevisionModelController.shared.fetchEpisodes(withID: seriesID, andSeason: seasonNumber, completion: { (success) in
                                 
                                 if success {
-                                    
                                     self.seriesIDsUsed += 1
-                                    let episodeValue = DateLogicController.shared.findMostCurrentEpisode(seriesID: seriesID)
-//                                    self.episodeArrayOfDictionaries.updateValue(episodeValue, forKey: episodeKey)
-//                                    print("Episode Dictionary from fetch: \(self.episodeArrayOfDictionaries)\n")
                                     
                                     if (self.seriesIDsUsed + self.nonFetchedEpisodes) == (seriesDictionaryKeys.count) {
                                         
-                                        DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-                                            searchBar.text = ""
+                                        DispatchQueue.main.async {
+//                                            searchBar.text = ""
                                             self.tableView.reloadData()
-                                        })
+                                        }
                                     }
                                 }
                                 
@@ -114,12 +107,12 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as? SeriesTableViewCell else { return UITableViewCell() }
         for key in TelevisionModelController.shared.seriesDictionary.keys {
-            let series = TelevisionModelController.shared.seriesDictionary[key] // Doesn't seem to be calling
+            let series = TelevisionModelController.shared.seriesDictionary[key]
             let seasons = TelevisionModelController.shared.seasonDictionary[key]
-//            let episodes = TelevisionModelController.shared.episodeDictionary[key]
+            let episodes = TelevisionModelController.shared.episodeDictionary[key]
             cell.series = series
             cell.seasons = seasons
-//            cell.episodes = episodes
+            cell.episodes = episodes
         }
         return cell
     }

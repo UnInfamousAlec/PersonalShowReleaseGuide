@@ -58,9 +58,9 @@ class TelevisionModelController {
                     let seriesArray = seriesDictionary.results.compactMap( {$0} )
                     seriesArray.forEach{ print("Series Results: \($0.name, $0.ID, $0.pilotAirDate, $0.language)") }; print("\n")
                     
-                    for show in seriesArray {
-                        self.seriesDictionary.updateValue(show, forKey: show.ID)
-                        self.removeNonEnglishFromShow(show: show)
+                    for series in seriesArray {
+                        self.seriesDictionary.updateValue(series, forKey: series.ID)
+                        self.removeNonEnglishFromShow(series: series)
                     }
                     completion(true)
                 } catch let error {
@@ -100,14 +100,21 @@ class TelevisionModelController {
                 do {
                     let jsonDecoder = JSONDecoder()
                     let seasonDictionary = try jsonDecoder.decode(SeriesForSeason.self, from: data)
-                    let seasons = seasonDictionary.seasons.compactMap( {$0} )
+                    self.seasonDictionary.updateValue(seasonDictionary, forKey: seasonDictionary.seasonIDFromSeries)
+                    
+                    self.removeSeriesWithEmptySesaons(series: seasonDictionary)
+                    let seasons = seasonDictionary.seasons.map({ (season) -> Season in
+                        if season.seasonAirDate == nil {
+                            season.seasonAirDate = ""
+                            return season
+                        }
+                        return season
+                    })
                     
                     print("Name: \(seasonDictionary.nameOfSeason)  Series ID: \(seasonDictionary.seasonIDFromSeries)  In Production: \(seasonDictionary.inProduction)  Status: \(seasonDictionary.status)")
                     seasons.forEach{ print("\($0.seasonName, $0.seasonNumber, $0.seasonAirDate)") }
                     
-                    self.removeSeriesWithEmptySesaons(series: seasonDictionary)
                     self.seasonDictionary.updateValue(seasonDictionary, forKey: seasonDictionary.seasonIDFromSeries)
-//                    self.currentSeason.append(DateLogic.shared.findMostCurrentSeason())
                     completion(true)
                 } catch let error {
                     print("Error handling season data: \(error) - \(error.localizedDescription)\n")
@@ -149,16 +156,15 @@ class TelevisionModelController {
                     let episodes = episodeDictionary.episodes.map({ (episode) -> Episode in
                         if episode.episodeAirDate == nil {
                             episode.episodeAirDate = ""
+                            return episode
                         }
                         return episode
                     })
                     
-                    // Print to console for debug
                     episodes.forEach{ print("Episode Details: \($0.episodeName, $0.episodeNumber, $0.episodeAirDate!)") }
-                    
-//                    self.episodes = episodes
-//                    self.currentEpisode.append(DateLogic.shared.findMostCurrentEpisode())
                     print("\"Current\" Episode Numbers: \(self.currentEpisode)\n")
+                    
+                    self.episodeDictionary.updateValue(episodeDictionary, forKey: seriesID)
                     completion(true)
                 } catch let error {
                     print("Error handling episode data: \(error) - \(error.localizedDescription)\n")
@@ -170,9 +176,9 @@ class TelevisionModelController {
         .resume()
     }
     
-    func removeNonEnglishFromShow(show: Series) {
-        if show.language != "en" {
-            seriesDictionary.removeValue(forKey: show.ID)
+    func removeNonEnglishFromShow(series: Series) {
+        if series.language != "en" {
+            seriesDictionary.removeValue(forKey: series.ID)
         }
     }
     

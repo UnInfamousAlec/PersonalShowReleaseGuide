@@ -58,7 +58,7 @@ class DateLogicController {
     }
     
     // Iterates through [Episode] to get the most recent episode then returns the season number
-    func findMostCurrentEpisode(seriesID: Int) -> Int {
+    func findMostCurrentEpisode(seriesID: Int) -> [Int : String] {
         
         let episodeDictionary = TelevisionModelController.shared.episodeDictionary
         let series = episodeDictionary[seriesID]
@@ -70,19 +70,35 @@ class DateLogicController {
         if episodeNumbers.count != episodeAirDates.count {
             print("HUGE ISSUE! episodeNumbers & episodeAirDates are somehow not the same amount! \(#function)")
         }
-        var mostCurrentEpisode = -1
+        var mostCurrentEpisode = [Int : String]()
         
         // Create episode number based on today's date
         for (episodeNumber, episodeAirDate) in zip(episodeNumbers, episodeAirDates) {
             print("\(episodeNumber) - \(episodeAirDate)\n")
             if episodeAirDate >= today {
-                mostCurrentEpisode = episodeNumber
+                mostCurrentEpisode = [episodeNumber : episodeAirDate]
                 break
             } else if episodeAirDate < today {
-                mostCurrentEpisode = episodeNumber
+                mostCurrentEpisode = [episodeNumber : episodeAirDate]
                 break
             }
         }
         return mostCurrentEpisode
     }
+    
+    func formatAirDate(episodeAirDate: String) -> String? {
+        let selectedLanguage = TelevisionModelController.shared.selectedLanguage
+        let selectedCountry = TelevisionModelController.shared.selectedCountry
+//        dateFormatter.locale = Locale(identifier: "\(selectedLanguage)_\(selectedCountry)")
+        
+        let dateFormatterToDate = DateFormatter()
+        dateFormatterToDate.dateFormat = "YYYY-MM-dd"
+        guard let date = dateFormatterToDate.date(from: episodeAirDate) else { return episodeAirDate }
+        
+        let dateFormatterToString = DateFormatter()
+        dateFormatterToString.dateFormat = "MMMM dd, YYYY"
+        let dateAsString = dateFormatterToString.string(from: date)
+        
+        return dateAsString
+        }
 }

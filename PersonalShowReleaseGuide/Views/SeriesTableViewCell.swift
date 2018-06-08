@@ -33,7 +33,7 @@ class SeriesTableViewCell: UITableViewCell {
     
     var episodes: SeasonForEpisode? {
         didSet {
-            showEpisodeNumber()
+            showEpisode()
         }
     }
     
@@ -54,29 +54,28 @@ class SeriesTableViewCell: UITableViewCell {
         }
         
         if year.count > 0 {
-            airYear = " (\(year))"
+            airYear = "(\(year))"
         } else {
-            airYear = ""
+            airYear = "(Unknown)"
         }
         
-        self.showTitleLabel.text = "\(series.name)\(airYear)"
+        self.showTitleLabel.text = "\(series.name) \(airYear)"
     }
     
     func showSeasonNumber() {
         guard let seriesID = series?.ID else { return }
         let seasonNumber = DateLogicController.shared.findMostCurrentSeason(seriesID: seriesID)
-        self.showCurrentSeasonLabel.text = "\(seasonNumber)"
+        self.showCurrentSeasonLabel.text = String(seasonNumber)
     }
     
-    func showEpisodeNumber() {
+    func showEpisode() {
         guard let seriesID = series?.ID else { return }
-        let episodeNumber = DateLogicController.shared.findMostCurrentEpisode(seriesID: seriesID)
-        self.showNextEpisodeLabel.text = "\(episodeNumber)"
-    }
-    
-    func showNextEpisodeAirDate() {
-        guard let seriesID = series?.ID else { return }
-//        let episodeAirDate = DateLogicController
+        let episode = DateLogicController.shared.findMostCurrentEpisode(seriesID: seriesID)
+        guard let episodeNumber = episode.keys.first else { return }
+        guard let episodeAirDate = episode.values.first else { return }
+        guard let episodeWithFormattedAirDate = DateLogicController.shared.formatAirDate(episodeAirDate: episodeAirDate) else { return }
         
+        self.showNextEpisodeLabel.text = String(episodeNumber)
+        self.showNextEpisodeAirDateLabel.text = episodeWithFormattedAirDate
     }
 }
