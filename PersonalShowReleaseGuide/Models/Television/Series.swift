@@ -24,7 +24,8 @@ struct Series: Decodable {
     let voteCount: Int
     let voteAverage: Double
     let posterEndPoint: String?
-    
+//    var seasons: [Season]?
+
     
     enum CodingKeys: String, CodingKey {
         case ID = "id"
@@ -36,6 +37,7 @@ struct Series: Decodable {
         case voteAverage = "vote_average"
         case posterEndPoint = "poster_path"
     }
+    
 }
 
 

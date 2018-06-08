@@ -30,6 +30,7 @@ class Season: Decodable {
     var seasonName: String?
     var seasonNumber: Int?
     var seasonAirDate: String?
+//    var episodes: [Episode]?
     
     enum CodingKeys: String, CodingKey {
         case seasonName = "name"

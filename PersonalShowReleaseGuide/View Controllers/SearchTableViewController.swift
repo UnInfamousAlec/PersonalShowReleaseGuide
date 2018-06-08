@@ -102,7 +102,7 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as? SeriesTableViewCell else { return UITableViewCell() }
-        let seriesID = self.seriesIDsUsed[indexPath.row]
+        let seriesID = self.seriesIDsUsed.reversed()[indexPath.row]
         let series = TelevisionModelController.shared.seriesDictionary[seriesID]
         let seasons = TelevisionModelController.shared.seasonDictionary[seriesID]
         let episodes = TelevisionModelController.shared.episodeDictionary[seriesID]

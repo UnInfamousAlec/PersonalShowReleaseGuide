@@ -23,6 +23,7 @@ class TelevisionModelController {
     var seriesDictionary = [Int : Series]()
     var seasonDictionary = [Int : SeriesForSeason]()
     var episodeDictionary = [Int : SeasonForEpisode]()
+    [1399 : Season]
     
     
     // MARK: - Methods
@@ -68,8 +69,7 @@ class TelevisionModelController {
                     return
                 }
             }
-        }
-        .resume()
+        }.resume()
     }
     
     // Fetch Series Seasons
@@ -121,8 +121,7 @@ class TelevisionModelController {
                     return
                 }
             }
-        }
-        .resume()
+        }.resume()
     }
     
     // Fetch Season Episode Numbers
@@ -170,8 +169,7 @@ class TelevisionModelController {
                     return
                 }
             }
-        }
-        .resume()
+        }.resume()
     }
     
     func removeNonEnglishFromShow(series: Series) {
@@ -180,9 +178,25 @@ class TelevisionModelController {
         }
     }
     
-    func removeSeriesWithEmptySesaons(series: SeriesForSeason) {
+    func removeSeriesWithEmptySesaons(seriesID: Int, series: SeriesForSeason) {
         if series.seasons.count != 0 {
-            self.seasonDictionary.removeValue(forKey: series.seasonIDFromSeries)
+            self.seasonDictionary.removeValue(forKey: seriesID)
         }
+    }
+    
+//    func checkForEmptyEpisode(seriesID: Int) -> Episode? {
+//        guard let seriesForSeason = self.seasonDictionary[seriesID] else { return nil}
+//        if  seriesForSeason.seasons.count != 0 {
+//            episodeDictionary.
+//        }
+//        return
+//    }
+    
+    func createEmptyEpisode(seriesID: Int, seasonNumber: Season) -> Episode {
+        let season = self.seasonDictionary[seriesID]
+        let episodeName = ""; let episodeNumber = 0; let episodeAirDate = ""; let episodeOverview = ""
+        var episode = [Episode]()
+        
+        self.episodeDictionary.updateValue(<#T##value: SeasonForEpisode##SeasonForEpisode#>, forKey: seriesID)
     }
 }

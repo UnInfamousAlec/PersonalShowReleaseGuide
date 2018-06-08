@@ -166,15 +166,15 @@
                                                     <rect key="frame" x="0.0" y="49.5" width="343" height="20.5"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" text="Next Episode Air Date:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="CYT-o0-iFt">
-                                                            <rect key="frame" x="0.0" y="0.0" width="238" height="20.5"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="193" height="20.5"/>
                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" " textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U9O-f0-0vK">
-                                                            <rect key="frame" x="238" y="0.0" width="105" height="20.5"/>
+                                                            <rect key="frame" x="193" y="0.0" width="150" height="20.5"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="105" id="7RX-RV-axi"/>
+                                                                <constraint firstAttribute="width" constant="150" id="7RX-RV-axi"/>
                                                             </constraints>
                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                             <color key="textColor" name="PSRGTint"/>
