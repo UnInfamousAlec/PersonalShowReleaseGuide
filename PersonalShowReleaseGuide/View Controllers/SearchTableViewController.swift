@@ -19,9 +19,7 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
     
     // MARK: - Properties
     var nonFetchedEpisodes = 0
-    var seriesIDsUsed = 0
-//    var seasonArrayOfDictionaries = [Int : Int]()
-//    var episodeArrayOfDictionaries = [Int : Int]()
+    var seriesIDsUsed = [Int]()
     
     
     // MARK: - Lifecycle
@@ -31,7 +29,7 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
         DateLogicController.shared.currentDate()
         showSegmentedControl.layer.cornerRadius = 0
         showSegmentedControl.layer.borderWidth = 1
-        showSearchBar.text = "suits" // For Test/Mock purposes
+        showSearchBar.text = "thrones" // For Test/Mock purposes
     }
     
     
@@ -40,10 +38,8 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
 
         guard let searchTerm = searchBar.text, searchTerm.count > 0 else { return }
         
-//        self.seasonArrayOfDictionaries.removeAll()
-//        self.episodeArrayOfDictionaries.removeAll()
         self.nonFetchedEpisodes = 0
-        self.seriesIDsUsed = 0
+        self.seriesIDsUsed.removeAll()
 
         // Get array of Show objects to pass to the cell
         TelevisionModelController.shared.fetchSeries(by: searchTerm) { (success) in
@@ -67,9 +63,9 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
                             TelevisionModelController.shared.fetchEpisodes(withID: seriesID, andSeason: seasonNumber, completion: { (success) in
                                 
                                 if success {
-                                    self.seriesIDsUsed += 1
+                                    self.seriesIDsUsed.append(seriesID)
                                     
-                                    if (self.seriesIDsUsed + self.nonFetchedEpisodes) == (seriesDictionaryKeys.count) {
+                                    if (self.seriesIDsUsed.count + self.nonFetchedEpisodes) == (seriesDictionaryKeys.count) {
                                         
                                         DispatchQueue.main.async {
 //                                            searchBar.text = ""
@@ -106,14 +102,13 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as? SeriesTableViewCell else { return UITableViewCell() }
-        for key in TelevisionModelController.shared.seriesDictionary.keys {
-            let series = TelevisionModelController.shared.seriesDictionary[key]
-            let seasons = TelevisionModelController.shared.seasonDictionary[key]
-            let episodes = TelevisionModelController.shared.episodeDictionary[key]
-            cell.series = series
-            cell.seasons = seasons
-            cell.episodes = episodes
-        }
+        let seriesID = self.seriesIDsUsed[indexPath.row]
+        let series = TelevisionModelController.shared.seriesDictionary[seriesID]
+        let seasons = TelevisionModelController.shared.seasonDictionary[seriesID]
+        let episodes = TelevisionModelController.shared.episodeDictionary[seriesID]
+        cell.series = series
+        cell.seasons = seasons
+        cell.episodes = episodes
         return cell
     }
 

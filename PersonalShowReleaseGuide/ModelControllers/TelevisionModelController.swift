@@ -23,16 +23,15 @@ class TelevisionModelController {
     var seriesDictionary = [Int : Series]()
     var seasonDictionary = [Int : SeriesForSeason]()
     var episodeDictionary = [Int : SeasonForEpisode]()
-    var seriesIDs: [Int] = [] // Phase out
-    var currentSeason: [Int] = [] // Phase out
-    var currentEpisode: [Int] = [] // Phase out
     
     
     // MARK: - Methods
     // Get list of series' from search
     func fetchSeries(by searchTerm: String, completion: @escaping(Bool) -> Void) {
-        currentSeason.removeAll()
-        currentEpisode.removeAll()
+        
+        seriesDictionary.removeAll()
+        seasonDictionary.removeAll()
+        episodeDictionary.removeAll()
         
         let queries = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "query" : "\(searchTerm)", "language" : "\(selectedLanguage)-\(selectedCountry)", "page" : "\(pageRequest)"]
         let requestSeriesURL = baseShowURL.withQueries(queries)!
@@ -112,7 +111,7 @@ class TelevisionModelController {
                     })
                     
                     print("Name: \(seasonDictionary.nameOfSeason)  Series ID: \(seasonDictionary.seasonIDFromSeries)  In Production: \(seasonDictionary.inProduction)  Status: \(seasonDictionary.status)")
-                    seasons.forEach{ print("\($0.seasonName, $0.seasonNumber, $0.seasonAirDate)") }
+                    seasons.forEach{ print("\($0.seasonName!, $0.seasonNumber!, $0.seasonAirDate!)") }
                     
                     self.seasonDictionary.updateValue(seasonDictionary, forKey: seasonDictionary.seasonIDFromSeries)
                     completion(true)
@@ -162,7 +161,6 @@ class TelevisionModelController {
                     })
                     
                     episodes.forEach{ print("Episode Details: \($0.episodeName, $0.episodeNumber, $0.episodeAirDate!)") }
-                    print("\"Current\" Episode Numbers: \(self.currentEpisode)\n")
                     
                     self.episodeDictionary.updateValue(episodeDictionary, forKey: seriesID)
                     completion(true)

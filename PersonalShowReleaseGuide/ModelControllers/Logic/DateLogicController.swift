@@ -45,7 +45,7 @@ class DateLogicController {
         
         // Create season number based on today's date
         for (seasonNumber, seasonAirDate) in zip(seasonNumbers, seasonAirDates) {
-            print("\(seasonNumber) - \(seasonAirDate)\n")
+            print("Most Current Season: \(seasonNumber) - \(seasonAirDate)\n")
             if seasonAirDate >= today {
                 mostCurrentSeason = seasonNumber
                 break
@@ -74,7 +74,7 @@ class DateLogicController {
         
         // Create episode number based on today's date
         for (episodeNumber, episodeAirDate) in zip(episodeNumbers, episodeAirDates) {
-            print("\(episodeNumber) - \(episodeAirDate)\n")
+            print("Most Current Episode: \(episodeNumber) - \(episodeAirDate)\n")
             if episodeAirDate >= today {
                 mostCurrentEpisode = [episodeNumber : episodeAirDate]
                 break
@@ -87,8 +87,8 @@ class DateLogicController {
     }
     
     func formatAirDate(episodeAirDate: String) -> String? {
-        let selectedLanguage = TelevisionModelController.shared.selectedLanguage
-        let selectedCountry = TelevisionModelController.shared.selectedCountry
+//        let selectedLanguage = TelevisionModelController.shared.selectedLanguage
+//        let selectedCountry = TelevisionModelController.shared.selectedCountry
 //        dateFormatter.locale = Locale(identifier: "\(selectedLanguage)_\(selectedCountry)")
         
         let dateFormatterToDate = DateFormatter()
