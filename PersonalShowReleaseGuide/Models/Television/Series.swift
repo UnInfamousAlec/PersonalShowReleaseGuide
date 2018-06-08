@@ -1,5 +1,5 @@
 //
-//  Show.swift
+//  Series.swift
 //  PersonalShowReleaseGuide
 //
 //  Created by Alec Osborne on 4/26/18.
@@ -12,21 +12,23 @@ import Foundation
 
 struct SeriesResults: Decodable {
     let results: [Series]
+    
 }
 
 struct Series: Decodable {
+    let ID: Int
     let name: String
-    let id: Int
-    let pilotAirDate: String
+    let pilotAirDate: String? // Might have issues with this
     let language: String
     let overview: String
     let voteCount: Int
     let voteAverage: Double
     let posterEndPoint: String?
     
+    
     enum CodingKeys: String, CodingKey {
+        case ID = "id"
         case name
-        case id
         case pilotAirDate = "first_air_date"
         case language = "original_language"
         case overview

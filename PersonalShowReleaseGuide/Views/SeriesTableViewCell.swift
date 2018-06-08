@@ -1,5 +1,5 @@
 //
-//  ShowTableViewCell.swift
+//  SeriesTableViewCell.swift
 //  PersonalShowReleaseGuide
 //
 //  Created by Alec Osborne on 4/26/18.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ShowTableViewCell: UITableViewCell {
+class SeriesTableViewCell: UITableViewCell {
     
     // MARK: - Outlets
     @IBOutlet weak var showTitleLabel: UILabel!
@@ -22,17 +22,16 @@ class ShowTableViewCell: UITableViewCell {
     var series: Series? {
         didSet {
             showAirYear()
-            
         }
     }
     
-    var currentSeason: Int? {
+    var seasons: SeriesForSeason? {
         didSet {
             showSeasonNumber()
         }
     }
     
-    var currentEpisode: Int? {
+    var episodes: SeasonForEpisode? {
         didSet {
             showEpisodeNumber()
         }
@@ -42,11 +41,12 @@ class ShowTableViewCell: UITableViewCell {
     // MARK: - Methods
     func showAirYear() {
         
-        guard let show = series else { return }
+        guard let series = series else { return }
+        guard let pilotAirDate = series.pilotAirDate else { return }
         var year = ""
-        var showAirYear = ""
+        var airYear = ""
         
-        for letter in show.pilotAirDate {
+        for letter in pilotAirDate {
             if letter == "-" {
                 break
             }
@@ -54,28 +54,29 @@ class ShowTableViewCell: UITableViewCell {
         }
         
         if year.count > 0 {
-            showAirYear = " (\(year))"
+            airYear = " (\(year))"
         } else {
-            showAirYear = ""
+            airYear = ""
         }
         
-        self.showTitleLabel.text = "\(show.name)\(showAirYear)"
+        self.showTitleLabel.text = "\(series.name)\(airYear)"
     }
     
     func showSeasonNumber() {
-
-        guard let seasonNumber = self.currentSeason else { return }
+        guard let seriesID = series?.ID else { return }
+        let seasonNumber = DateLogicController.shared.findMostCurrentSeason(seriesID: seriesID)
         self.showCurrentSeasonLabel.text = "\(seasonNumber)"
     }
     
     func showEpisodeNumber() {
-        
-        guard let episodeNumber = self.currentEpisode else { return }
+        guard let seriesID = series?.ID else { return }
+        let episodeNumber = DateLogicController.shared.findMostCurrentEpisode(seriesID: seriesID)
         self.showNextEpisodeLabel.text = "\(episodeNumber)"
     }
     
     func showNextEpisodeAirDate() {
-        
+        guard let seriesID = series?.ID else { return }
+//        let episodeAirDate = DateLogicController
         
     }
 }

@@ -8,8 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		F429102A2095321300F45336 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42910292095321300F45336 /* LoginViewController.swift */; };
-		F432C0772092D7A000876291 /* DateLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = F432C0762092D7A000876291 /* DateLogic.swift */; };
+		F432C0772092D7A000876291 /* DateLogicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F432C0762092D7A000876291 /* DateLogicController.swift */; };
 		F442E9DB2092B5FD00784053 /* Season.swift in Sources */ = {isa = PBXBuildFile; fileRef = F442E9DA2092B5FD00784053 /* Season.swift */; };
+		F49D526020C8BDB9008CC1FE /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49D525F20C8BDB9008CC1FE /* Language.swift */; };
+		F49D526220C9A22C008CC1FE /* MovieTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49D526120C9A22C008CC1FE /* MovieTableViewCell.swift */; };
 		F4F851AC20927083003591AC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851AB20927083003591AC /* AppDelegate.swift */; };
 		F4F851B120927083003591AC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4F851AF20927083003591AC /* Main.storyboard */; };
 		F4F851B320927083003591AC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4F851B220927083003591AC /* Assets.xcassets */; };
@@ -17,14 +19,16 @@
 		F4F851C4209273A8003591AC /* Series.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851C3209273A8003591AC /* Series.swift */; };
 		F4F851C6209276B8003591AC /* Episode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851C5209276B8003591AC /* Episode.swift */; };
 		F4F851CA20927EF2003591AC /* TelevisionModelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851C920927EF2003591AC /* TelevisionModelController.swift */; };
-		F4F851CC20928372003591AC /* ShowTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851CB20928372003591AC /* ShowTableViewController.swift */; };
-		F4F851CE20928481003591AC /* ShowTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851CD20928481003591AC /* ShowTableViewCell.swift */; };
+		F4F851CC20928372003591AC /* SearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851CB20928372003591AC /* SearchTableViewController.swift */; };
+		F4F851CE20928481003591AC /* SeriesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851CD20928481003591AC /* SeriesTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		F42910292095321300F45336 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
-		F432C0762092D7A000876291 /* DateLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateLogic.swift; sourceTree = "<group>"; };
+		F432C0762092D7A000876291 /* DateLogicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateLogicController.swift; sourceTree = "<group>"; };
 		F442E9DA2092B5FD00784053 /* Season.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Season.swift; sourceTree = "<group>"; };
+		F49D525F20C8BDB9008CC1FE /* Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
+		F49D526120C9A22C008CC1FE /* MovieTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieTableViewCell.swift; sourceTree = "<group>"; };
 		F4F851A820927083003591AC /* PersonalShowReleaseGuide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PersonalShowReleaseGuide.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4F851AB20927083003591AC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F4F851B020927083003591AC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -34,8 +38,8 @@
 		F4F851C3209273A8003591AC /* Series.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Series.swift; sourceTree = "<group>"; };
 		F4F851C5209276B8003591AC /* Episode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Episode.swift; sourceTree = "<group>"; };
 		F4F851C920927EF2003591AC /* TelevisionModelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelevisionModelController.swift; sourceTree = "<group>"; };
-		F4F851CB20928372003591AC /* ShowTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTableViewController.swift; sourceTree = "<group>"; };
-		F4F851CD20928481003591AC /* ShowTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTableViewCell.swift; sourceTree = "<group>"; };
+		F4F851CB20928372003591AC /* SearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTableViewController.swift; sourceTree = "<group>"; };
+		F4F851CD20928481003591AC /* SeriesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,9 +56,34 @@
 		F432C0752092D69700876291 /* Logic */ = {
 			isa = PBXGroup;
 			children = (
-				F432C0762092D7A000876291 /* DateLogic.swift */,
+				F432C0762092D7A000876291 /* DateLogicController.swift */,
 			);
 			path = Logic;
+			sourceTree = "<group>";
+		};
+		F49D525C20C8BD80008CC1FE /* Television */ = {
+			isa = PBXGroup;
+			children = (
+				F4F851C3209273A8003591AC /* Series.swift */,
+				F442E9DA2092B5FD00784053 /* Season.swift */,
+				F4F851C5209276B8003591AC /* Episode.swift */,
+			);
+			path = Television;
+			sourceTree = "<group>";
+		};
+		F49D525D20C8BD92008CC1FE /* Language */ = {
+			isa = PBXGroup;
+			children = (
+				F49D525F20C8BDB9008CC1FE /* Language.swift */,
+			);
+			path = Language;
+			sourceTree = "<group>";
+		};
+		F49D525E20C8BD9E008CC1FE /* User */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = User;
 			sourceTree = "<group>";
 		};
 		F4F8519F20927083003591AC = {
@@ -108,7 +137,8 @@
 		F4F851BF209272E1003591AC /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				F4F851CD20928481003591AC /* ShowTableViewCell.swift */,
+				F4F851CD20928481003591AC /* SeriesTableViewCell.swift */,
+				F49D526120C9A22C008CC1FE /* MovieTableViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -116,7 +146,7 @@
 		F4F851C0209272E8003591AC /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				F4F851CB20928372003591AC /* ShowTableViewController.swift */,
+				F4F851CB20928372003591AC /* SearchTableViewController.swift */,
 				F42910292095321300F45336 /* LoginViewController.swift */,
 			);
 			path = "View Controllers";
@@ -134,9 +164,9 @@
 		F4F851C2209272F7003591AC /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				F4F851C3209273A8003591AC /* Series.swift */,
-				F442E9DA2092B5FD00784053 /* Season.swift */,
-				F4F851C5209276B8003591AC /* Episode.swift */,
+				F49D525E20C8BD9E008CC1FE /* User */,
+				F49D525C20C8BD80008CC1FE /* Television */,
+				F49D525D20C8BD92008CC1FE /* Language */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -213,14 +243,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				F442E9DB2092B5FD00784053 /* Season.swift in Sources */,
-				F4F851CE20928481003591AC /* ShowTableViewCell.swift in Sources */,
+				F49D526020C8BDB9008CC1FE /* Language.swift in Sources */,
+				F4F851CE20928481003591AC /* SeriesTableViewCell.swift in Sources */,
 				F429102A2095321300F45336 /* LoginViewController.swift in Sources */,
 				F4F851C4209273A8003591AC /* Series.swift in Sources */,
-				F432C0772092D7A000876291 /* DateLogic.swift in Sources */,
+				F432C0772092D7A000876291 /* DateLogicController.swift in Sources */,
 				F4F851C6209276B8003591AC /* Episode.swift in Sources */,
 				F4F851CA20927EF2003591AC /* TelevisionModelController.swift in Sources */,
 				F4F851AC20927083003591AC /* AppDelegate.swift in Sources */,
-				F4F851CC20928372003591AC /* ShowTableViewController.swift in Sources */,
+				F49D526220C9A22C008CC1FE /* MovieTableViewCell.swift in Sources */,
+				F4F851CC20928372003591AC /* SearchTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

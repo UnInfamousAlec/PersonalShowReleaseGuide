@@ -1,5 +1,5 @@
 //
-//  ShowModelController.swift
+//  TelevisionModelController.swift
 //  PersonalShowReleaseGuide
 //
 //  Created by Alec Osborne on 4/26/18.
@@ -15,14 +15,17 @@ class TelevisionModelController {
     
     
     // MARK: - Properties
-    var series: [Series] = []
-    var seasons: [Season] = []
-    var episodes: [Episode] = []
-    var seriesIDs: [Int] = []
-    var currentSeason: [Int] = []
-    var currentEpisode: [Int] = []
-    var nextEpisodeAirDate: [String] = []
     let baseShowURL = URL(string: "https://api.themoviedb.org/3/search/tv?")!
+    var selectedLanguage = "en"
+    var selectedCountry = "US"
+    var pageRequest = 1
+    
+    var seriesDictionary = [Int : Series]()
+    var seasonDictionary = [Int : SeriesForSeason]()
+    var episodeDictionary = [Int : SeasonForEpisode]()
+    var seriesIDs: [Int] = [] // Phase out
+    var currentSeason: [Int] = [] // Phase out
+    var currentEpisode: [Int] = [] // Phase out
     
     
     // MARK: - Methods
@@ -31,7 +34,7 @@ class TelevisionModelController {
         currentSeason.removeAll()
         currentEpisode.removeAll()
         
-        let queries = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "query" : "\(searchTerm)", "language" : "en-US"]
+        let queries = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "query" : "\(searchTerm)", "language" : "\(selectedLanguage)-\(selectedCountry)", "page" : "\(pageRequest)"]
         let requestSeriesURL = baseShowURL.withQueries(queries)!
         print("\nRequested Series URL: \(requestSeriesURL)\n")
         
@@ -49,15 +52,16 @@ class TelevisionModelController {
 //            }
             
             if let data = data {
-                
                 do {
                     let jsonDecoder = JSONDecoder()
                     let seriesDictionary = try jsonDecoder.decode(SeriesResults.self, from: data)
-                    let shows = seriesDictionary.results.compactMap( {$0} )
-                    shows.forEach{ print("Series Results: \($0.name, $0.id, $0.pilotAirDate, $0.language)") }
-                    self.series = shows
-                    self.removeNonEnglishFromShow()
-                    self.seriesIDs = self.series.map{$0.id}
+                    let seriesArray = seriesDictionary.results.compactMap( {$0} )
+                    seriesArray.forEach{ print("Series Results: \($0.name, $0.ID, $0.pilotAirDate, $0.language)") }; print("\n")
+                    
+                    for show in seriesArray {
+                        self.seriesDictionary.updateValue(show, forKey: show.ID)
+                        self.removeNonEnglishFromShow(show: show)
+                    }
                     completion(true)
                 } catch let error {
                     print("Error handling series data: \(error) - \(error.localizedDescription)\n")
@@ -71,13 +75,13 @@ class TelevisionModelController {
     
     // Fetch Series Seasons
     func fetchSeasons(withID seriesID: Int, completion: @escaping(Bool) -> Void) {
-                
+        
         let baseSeasonURL = "https://api.themoviedb.org/3/tv/"
         let midSeasonURL = "\(seriesID)" + "?"
         let queries = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "language" : "en-US"]
         
         let seasonURL = URL(string: baseSeasonURL + midSeasonURL)!.withQueries(queries)!
-        print("Requested Season URL: \(seasonURL) for Series: \(seriesID)\n")
+        print("Requested Season URL: \(seasonURL)\n")
         
         URLSession.shared.dataTask(with: seasonURL) { (data, response, error) in
             
@@ -96,20 +100,14 @@ class TelevisionModelController {
                 do {
                     let jsonDecoder = JSONDecoder()
                     let seasonDictionary = try jsonDecoder.decode(SeriesForSeason.self, from: data)
-                    let seasons = seasonDictionary.seasons.map({ (season) -> Season in
-                        if season.seasonAirDate == nil {
-                            season.seasonAirDate = ""
-                        }
-                        return season
-                    })
+                    let seasons = seasonDictionary.seasons.compactMap( {$0} )
                     
-                    // Print to console for debug
-                    print("Name: \(seasonDictionary.name)  In Production: \(seasonDictionary.inProduction)  Status: \(seasonDictionary.status)")
-                    seasons.forEach{ print("\($0.seasonName, $0.seasonNumber, $0.seasonAirDate!)") }
+                    print("Name: \(seasonDictionary.nameOfSeason)  Series ID: \(seasonDictionary.seasonIDFromSeries)  In Production: \(seasonDictionary.inProduction)  Status: \(seasonDictionary.status)")
+                    seasons.forEach{ print("\($0.seasonName, $0.seasonNumber, $0.seasonAirDate)") }
                     
-                    self.seasons = seasons
-                    self.currentSeason.append(DateLogic.shared.findMostCurrentSeason())
-                    print("\"Current\" Season Numbers: \(self.currentSeason)\n")
+                    self.removeSeriesWithEmptySesaons(series: seasonDictionary)
+                    self.seasonDictionary.updateValue(seasonDictionary, forKey: seasonDictionary.seasonIDFromSeries)
+//                    self.currentSeason.append(DateLogic.shared.findMostCurrentSeason())
                     completion(true)
                 } catch let error {
                     print("Error handling season data: \(error) - \(error.localizedDescription)\n")
@@ -131,18 +129,11 @@ class TelevisionModelController {
         let episodeURL = URL(string: baseEpisodeURL + midEpisodeURL)!.withQueries(queries)!
         print("Requested Episode URL: \(episodeURL)\n")
         
-//        if seasonNumber == 1000000 {
-//            self.currentEpisode.append(1000000)
-//            completion(true)
-//            return
-//        }
-        
         URLSession.shared.dataTask(with: episodeURL) { (data, response, error) in
             
             if let error = error {
-                self.currentEpisode.append(1000000)
                 print("Error with episode fetch request: \(error) - \(error.localizedDescription)"); print("\n")
-                completion(true)
+                completion(false)
                 return
             }
             
@@ -163,10 +154,10 @@ class TelevisionModelController {
                     })
                     
                     // Print to console for debug
-                    episodes.forEach{ print("\($0.name, $0.episodeNumber, $0.episodeAirDate)") }
+                    episodes.forEach{ print("Episode Details: \($0.episodeName, $0.episodeNumber, $0.episodeAirDate!)") }
                     
-                    self.episodes = episodes
-                    self.currentEpisode.append(DateLogic.shared.findMostCurrentEpisode())
+//                    self.episodes = episodes
+//                    self.currentEpisode.append(DateLogic.shared.findMostCurrentEpisode())
                     print("\"Current\" Episode Numbers: \(self.currentEpisode)\n")
                     completion(true)
                 } catch let error {
@@ -179,16 +170,15 @@ class TelevisionModelController {
         .resume()
     }
     
-    func removeNonEnglishFromShow() {
-        var nonEnglishIndexLocations: [Int] = []
-        for (index, show) in self.series.enumerated() {
-            if show.language != "en" {
-                nonEnglishIndexLocations.append(index)
-            }
+    func removeNonEnglishFromShow(show: Series) {
+        if show.language != "en" {
+            seriesDictionary.removeValue(forKey: show.ID)
         }
-        while nonEnglishIndexLocations.count > 0 {
-            series.remove(at: nonEnglishIndexLocations.last!)
-            nonEnglishIndexLocations.removeLast()
+    }
+    
+    func removeSeriesWithEmptySesaons(series: SeriesForSeason) {
+        if series.seasons.count != 0 {
+            self.seasonDictionary.removeValue(forKey: series.seasonIDFromSeries)
         }
     }
 }
