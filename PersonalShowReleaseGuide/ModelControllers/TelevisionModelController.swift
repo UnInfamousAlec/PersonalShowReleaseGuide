@@ -10,7 +10,7 @@ import Foundation
 
 class TelevisionModelController {
     
-    // MARK: - Singleton
+    // MARK: - Shared instance
     static let shared = TelevisionModelController()
     
     
@@ -18,12 +18,14 @@ class TelevisionModelController {
     let baseShowURL = URL(string: "https://api.themoviedb.org/3/search/tv?")!
     var selectedLanguage = "en"
     var selectedCountry = "US"
+    var adultContent = false
     var pageRequest = 1
     
     var seriesDictionary = [Int : Series]()
     var seasonDictionary = [Int : SeriesForSeason]()
     var episodeDictionary = [Int : SeasonForEpisode]()
-    [1399 : Season]
+    
+    var entireSeries = [Series]()
     
     
     // MARK: - Methods
@@ -33,6 +35,7 @@ class TelevisionModelController {
         seriesDictionary.removeAll()
         seasonDictionary.removeAll()
         episodeDictionary.removeAll()
+        entireSeries.removeAll()
         
         let queries = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "query" : "\(searchTerm)", "language" : "\(selectedLanguage)-\(selectedCountry)", "page" : "\(pageRequest)"]
         let requestSeriesURL = baseShowURL.withQueries(queries)!
@@ -57,6 +60,7 @@ class TelevisionModelController {
                     let seriesDictionary = try jsonDecoder.decode(SeriesResults.self, from: data)
                     let seriesArray = seriesDictionary.results.compactMap( {$0} )
                     seriesArray.forEach{ print("Series Results: \($0.name, $0.ID, $0.pilotAirDate, $0.language)") }; print("\n")
+                    self.entireSeries = seriesArray
                     
                     for series in seriesArray {
                         self.seriesDictionary.updateValue(series, forKey: series.ID)
@@ -98,11 +102,15 @@ class TelevisionModelController {
             if let data = data {
                 do {
                     let jsonDecoder = JSONDecoder()
-                    let seasonDictionary = try jsonDecoder.decode(SeriesForSeason.self, from: data)
-                    self.seasonDictionary.updateValue(seasonDictionary, forKey: seasonDictionary.seasonIDFromSeries)
+                    let seriesForSeasonDictionary = try jsonDecoder.decode(SeriesForSeason.self, from: data)
                     
-                    self.removeSeriesWithEmptySesaons(series: seasonDictionary)
-                    let seasons = seasonDictionary.seasons.map({ (season) -> Season in
+                    for series in self.entireSeries {
+                        
+                    }
+                    
+                    self.seasonDictionary.updateValue(seriesForSeasonDictionary, forKey: seriesForSeasonDictionary.seriesID)
+                    
+                    let seasons = seriesForSeasonDictionary.seasons.map({ (season) -> Season in
                         if season.seasonAirDate == nil {
                             season.seasonAirDate = ""
                             return season
@@ -110,10 +118,11 @@ class TelevisionModelController {
                         return season
                     })
                     
-                    print("Name: \(seasonDictionary.nameOfSeason)  Series ID: \(seasonDictionary.seasonIDFromSeries)  In Production: \(seasonDictionary.inProduction)  Status: \(seasonDictionary.status)")
+                    print("Name: \(seriesForSeasonDictionary.nameOfSeason)  Series ID: \(seriesForSeasonDictionary.seriesID)  In Production: \(seriesForSeasonDictionary.inProduction)  Status: \(seriesForSeasonDictionary.status)")
                     seasons.forEach{ print("\($0.seasonName!, $0.seasonNumber!, $0.seasonAirDate!)") }
                     
-                    self.seasonDictionary.updateValue(seasonDictionary, forKey: seasonDictionary.seasonIDFromSeries)
+                    self.addEpisodeToEmptySesaons(seriesID: seriesID, seriesForSeason: seriesForSeasonDictionary)
+                    self.seasonDictionary.updateValue(seriesForSeasonDictionary, forKey: seriesForSeasonDictionary.seriesID)
                     completion(true)
                 } catch let error {
                     print("Error handling season data: \(error) - \(error.localizedDescription)\n")
@@ -150,8 +159,8 @@ class TelevisionModelController {
             if let data = data {
                 do {
                     let jsonDecoder = JSONDecoder()
-                    let episodeDictionary = try jsonDecoder.decode(SeasonForEpisode.self, from: data)
-                    let episodes = episodeDictionary.episodes.map({ (episode) -> Episode in
+                    let seasonForEpisodeDictionary = try jsonDecoder.decode(SeasonForEpisode.self, from: data)
+                    let episodes = seasonForEpisodeDictionary.episodes.map({ (episode) -> Episode in
                         if episode.episodeAirDate == nil {
                             episode.episodeAirDate = ""
                             return episode
@@ -161,7 +170,7 @@ class TelevisionModelController {
                     
                     episodes.forEach{ print("Episode Details: \($0.episodeName, $0.episodeNumber, $0.episodeAirDate!)") }
                     
-                    self.episodeDictionary.updateValue(episodeDictionary, forKey: seriesID)
+                    self.episodeDictionary.updateValue(seasonForEpisodeDictionary, forKey: seriesID)
                     completion(true)
                 } catch let error {
                     print("Error handling episode data: \(error) - \(error.localizedDescription)\n")
@@ -178,9 +187,9 @@ class TelevisionModelController {
         }
     }
     
-    func removeSeriesWithEmptySesaons(seriesID: Int, series: SeriesForSeason) {
-        if series.seasons.count != 0 {
-            self.seasonDictionary.removeValue(forKey: seriesID)
+    func addEpisodeToEmptySesaons(seriesID: Int, seriesForSeason dictionary: SeriesForSeason) {
+        if dictionary.seasons.count == 0 {
+            createEmptyEpisode(seriesID: seriesID)
         }
     }
     
@@ -192,11 +201,16 @@ class TelevisionModelController {
 //        return
 //    }
     
-    func createEmptyEpisode(seriesID: Int, seasonNumber: Season) -> Episode {
-        let season = self.seasonDictionary[seriesID]
-        let episodeName = ""; let episodeNumber = 0; let episodeAirDate = ""; let episodeOverview = ""
-        var episode = [Episode]()
+    func createEmptyEpisode(seriesID: Int) {
         
-        self.episodeDictionary.updateValue(<#T##value: SeasonForEpisode##SeasonForEpisode#>, forKey: seriesID)
+        let seasonID = 0; let episodeName = ""; let episodeNumber = 0; let episodeAirDate = ""; let episodeOverview = ""
+        let emptyEpisode = Episode(seasonID: seasonID, episodeName: episodeName, episodeNumber: episodeNumber, episodeAirDate: episodeAirDate, episodeOverview: episodeOverview)
+        
+        var emptyEpisodeArray = [Episode]()
+        emptyEpisodeArray.append(emptyEpisode)
+        
+        let seasonForEpisode = SeasonForEpisode(episodes: emptyEpisodeArray)
+        
+        self.episodeDictionary.updateValue(seasonForEpisode, forKey: seriesID)
     }
 }

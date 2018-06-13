@@ -19,19 +19,22 @@ struct SeasonForEpisode: Decodable {
 }
 
 class Episode: Decodable {
+    var seasonID: Int
     let episodeName: String
     let episodeNumber: Int
     var episodeAirDate: String?
     let episodeOverview: String
     
     enum CodingKeys: String, CodingKey {
+        case seasonID = "id"
         case episodeName = "name"
         case episodeNumber = "episode_number"
         case episodeAirDate = "air_date"
         case episodeOverview = "overview"
     }
     
-    init(episodeName: String, episodeNumber: Int, episodeAirDate: String?, episodeOverview: String) {
+    init(seasonID: Int, episodeName: String, episodeNumber: Int, episodeAirDate: String?, episodeOverview: String) {
+        self.seasonID = seasonID
         self.episodeName = episodeName
         self.episodeNumber = episodeNumber
         self.episodeAirDate = episodeAirDate

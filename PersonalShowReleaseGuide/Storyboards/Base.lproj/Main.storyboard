@@ -297,10 +297,10 @@
             </objects>
             <point key="canvasLocation" x="4073" y="-263"/>
         </scene>
-        <!--View Controller-->
+        <!--Search Detail View Controller-->
         <scene sceneID="x9K-Zn-g2W">
             <objects>
-                <viewController id="RgW-Zm-X9L" sceneMemberID="viewController">
+                <viewController id="RgW-Zm-X9L" customClass="SearchDetailViewController" customModule="PersonalShowReleaseGuide" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Yuk-xg-ya7">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

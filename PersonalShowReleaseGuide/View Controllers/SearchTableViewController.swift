@@ -18,7 +18,6 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
     
     
     // MARK: - Properties
-    var nonFetchedEpisodes = 0
     var seriesIDsUsed = [Int]()
     
     
@@ -29,7 +28,7 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
         DateLogicController.shared.currentDate()
         showSegmentedControl.layer.cornerRadius = 0
         showSegmentedControl.layer.borderWidth = 1
-        showSearchBar.text = "thrones" // For Test/Mock purposes
+        showSearchBar.text = "if" // For Mock purposes
     }
     
     
@@ -38,7 +37,6 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
 
         guard let searchTerm = searchBar.text, searchTerm.count > 0 else { return }
         
-        self.nonFetchedEpisodes = 0
         self.seriesIDsUsed.removeAll()
 
         // Get array of Show objects to pass to the cell
@@ -53,10 +51,9 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
                         if success {
                             let seasonNumber = DateLogicController.shared.findMostCurrentSeason(seriesID: seriesID)
                             
-//                            DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
                             
                             if seasonNumber == -1 {
-                                self.nonFetchedEpisodes += 1
+                                self.seriesIDsUsed.append(seriesID)
                                 return
                             }
                             
@@ -65,7 +62,7 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
                                 if success {
                                     self.seriesIDsUsed.append(seriesID)
                                     
-                                    if (self.seriesIDsUsed.count + self.nonFetchedEpisodes) == (seriesDictionaryKeys.count) {
+                                    if self.seriesIDsUsed.count == seriesDictionaryKeys.count {
                                         
                                         DispatchQueue.main.async {
 //                                            searchBar.text = ""
@@ -78,7 +75,6 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
                                     print("Error fetching episodes: \(Error.self)")
                                 }
                             })
-//                            })
                         }
                         
                         if !success {
@@ -102,7 +98,7 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as? SeriesTableViewCell else { return UITableViewCell() }
-        let seriesID = self.seriesIDsUsed.reversed()[indexPath.row]
+        let seriesID = self.seriesIDsUsed[indexPath.row]
         let series = TelevisionModelController.shared.seriesDictionary[seriesID]
         let seasons = TelevisionModelController.shared.seasonDictionary[seriesID]
         let episodes = TelevisionModelController.shared.episodeDictionary[seriesID]
@@ -111,10 +107,16 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
         cell.episodes = episodes
         return cell
     }
-
-    //    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    //        <#code#>
-    //    }
+    
+//    func sortSeriesDictionary(series: Series) -> [Series] {
+//        let sortedSeries = [Series]
+//        for show in series {
+//            
+//        }
+//    }
+//        override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//
+//        }
 }
 
 //// Change color on a label

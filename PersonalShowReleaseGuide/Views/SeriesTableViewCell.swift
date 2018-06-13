@@ -21,25 +21,25 @@ class SeriesTableViewCell: UITableViewCell {
     // MARK: - Properties
     var series: Series? {
         didSet {
-            showAirYear()
+            showAirYear(series: series)
         }
     }
     
     var seasons: SeriesForSeason? {
         didSet {
-            showSeasonNumber()
+            showSeasonNumber(series: series)
         }
     }
     
     var episodes: SeasonForEpisode? {
         didSet {
-            showEpisode()
+            showEpisode(series: series)
         }
     }
     
     
     // MARK: - Methods
-    func showAirYear() {
+    func showAirYear(series: Series?) {
         
         guard let series = series else { return }
         guard let pilotAirDate = series.pilotAirDate else { return }
@@ -62,20 +62,34 @@ class SeriesTableViewCell: UITableViewCell {
         self.showTitleLabel.text = "\(series.name) \(airYear)"
     }
     
-    func showSeasonNumber() {
+    func showSeasonNumber(series: Series?) {
+        
         guard let seriesID = series?.ID else { return }
         let seasonNumber = DateLogicController.shared.findMostCurrentSeason(seriesID: seriesID)
-        self.showCurrentSeasonLabel.text = String(seasonNumber)
+        
+        if seasonNumber == -1 {
+            self.showCurrentSeasonLabel.text = "N/A"
+        } else {
+            self.showCurrentSeasonLabel.text = String(seasonNumber)
+        }
     }
     
-    func showEpisode() {
+    func showEpisode(series: Series?) {
+        
         guard let seriesID = series?.ID else { return }
+        let seasonNumber = DateLogicController.shared.findMostCurrentSeason(seriesID: seriesID)
         let episode = DateLogicController.shared.findMostCurrentEpisode(seriesID: seriesID)
+        
         guard let episodeNumber = episode.keys.first else { return }
         guard let episodeAirDate = episode.values.first else { return }
         guard let episodeWithFormattedAirDate = DateLogicController.shared.formatAirDate(episodeAirDate: episodeAirDate) else { return }
         
-        self.showNextEpisodeLabel.text = String(episodeNumber)
-        self.showNextEpisodeAirDateLabel.text = episodeWithFormattedAirDate
+        if seasonNumber == -1 {
+            self.showNextEpisodeLabel.text = "N/A"
+            self.showNextEpisodeAirDateLabel.text = "Unknown"
+        } else {
+            self.showNextEpisodeLabel.text = String(episodeNumber)
+            self.showNextEpisodeAirDateLabel.text = episodeWithFormattedAirDate
+        }
     }
 }

@@ -10,6 +10,9 @@
 		F429102A2095321300F45336 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42910292095321300F45336 /* LoginViewController.swift */; };
 		F432C0772092D7A000876291 /* DateLogicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F432C0762092D7A000876291 /* DateLogicController.swift */; };
 		F442E9DB2092B5FD00784053 /* Season.swift in Sources */ = {isa = PBXBuildFile; fileRef = F442E9DA2092B5FD00784053 /* Season.swift */; };
+		F482ACA220D01DB10056B23C /* SearchDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F482ACA120D01DB10056B23C /* SearchDetailViewController.swift */; };
+		F482ACA420D01E1F0056B23C /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = F482ACA320D01E1F0056B23C /* Movie.swift */; };
+		F482ACA620D01E4C0056B23C /* MovieModelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F482ACA520D01E4C0056B23C /* MovieModelController.swift */; };
 		F49D526020C8BDB9008CC1FE /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49D525F20C8BDB9008CC1FE /* Language.swift */; };
 		F49D526220C9A22C008CC1FE /* MovieTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49D526120C9A22C008CC1FE /* MovieTableViewCell.swift */; };
 		F4F851AC20927083003591AC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851AB20927083003591AC /* AppDelegate.swift */; };
@@ -27,6 +30,9 @@
 		F42910292095321300F45336 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		F432C0762092D7A000876291 /* DateLogicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateLogicController.swift; sourceTree = "<group>"; };
 		F442E9DA2092B5FD00784053 /* Season.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Season.swift; sourceTree = "<group>"; };
+		F482ACA120D01DB10056B23C /* SearchDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchDetailViewController.swift; sourceTree = "<group>"; };
+		F482ACA320D01E1F0056B23C /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
+		F482ACA520D01E4C0056B23C /* MovieModelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieModelController.swift; sourceTree = "<group>"; };
 		F49D525F20C8BDB9008CC1FE /* Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
 		F49D526120C9A22C008CC1FE /* MovieTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieTableViewCell.swift; sourceTree = "<group>"; };
 		F4F851A820927083003591AC /* PersonalShowReleaseGuide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PersonalShowReleaseGuide.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,6 +73,7 @@
 				F4F851C3209273A8003591AC /* Series.swift */,
 				F442E9DA2092B5FD00784053 /* Season.swift */,
 				F4F851C5209276B8003591AC /* Episode.swift */,
+				F482ACA320D01E1F0056B23C /* Movie.swift */,
 			);
 			path = Television;
 			sourceTree = "<group>";
@@ -147,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				F4F851CB20928372003591AC /* SearchTableViewController.swift */,
+				F482ACA120D01DB10056B23C /* SearchDetailViewController.swift */,
 				F42910292095321300F45336 /* LoginViewController.swift */,
 			);
 			path = "View Controllers";
@@ -156,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				F4F851C920927EF2003591AC /* TelevisionModelController.swift */,
+				F482ACA520D01E4C0056B23C /* MovieModelController.swift */,
 				F432C0752092D69700876291 /* Logic */,
 			);
 			path = ModelControllers;
@@ -246,12 +255,15 @@
 				F49D526020C8BDB9008CC1FE /* Language.swift in Sources */,
 				F4F851CE20928481003591AC /* SeriesTableViewCell.swift in Sources */,
 				F429102A2095321300F45336 /* LoginViewController.swift in Sources */,
+				F482ACA620D01E4C0056B23C /* MovieModelController.swift in Sources */,
 				F4F851C4209273A8003591AC /* Series.swift in Sources */,
 				F432C0772092D7A000876291 /* DateLogicController.swift in Sources */,
 				F4F851C6209276B8003591AC /* Episode.swift in Sources */,
 				F4F851CA20927EF2003591AC /* TelevisionModelController.swift in Sources */,
+				F482ACA420D01E1F0056B23C /* Movie.swift in Sources */,
 				F4F851AC20927083003591AC /* AppDelegate.swift in Sources */,
 				F49D526220C9A22C008CC1FE /* MovieTableViewCell.swift in Sources */,
+				F482ACA220D01DB10056B23C /* SearchDetailViewController.swift in Sources */,
 				F4F851CC20928372003591AC /* SearchTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

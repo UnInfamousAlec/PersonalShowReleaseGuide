@@ -8,7 +8,7 @@
 
 import Foundation
 
-// Based on https://api.themoviedb.org/3/search/tv?api_key=1f76e7734a01ecc55ff5054b1d2a3e82&query=thrones&language=en-US
+// Based on https://api.themoviedb.org/3/search/tv?api_key=1f76e7734a01ecc55ff5054b1d2a3e82&query=suits&language=en-US
 
 struct SeriesResults: Decodable {
     let results: [Series]
@@ -17,14 +17,14 @@ struct SeriesResults: Decodable {
 
 struct Series: Decodable {
     let ID: Int
-    let name: String
-    let pilotAirDate: String? // Might have issues with this
-    let language: String
-    let overview: String
-    let voteCount: Int
-    let voteAverage: Double
-    let posterEndPoint: String?
-//    var seasons: [Season]?
+    let name: String // Don't think I need this
+    let pilotAirDate: String? // Don't think I need this  Might have issues with this
+    let language: String // Don't think I need this
+    let overview: String // Don't think I need this
+    let voteCount: Int // Don't think I need this
+    let voteAverage: Double // Don't think I need this
+    let posterEndPoint: String? // Don't think I need this
+    var seriesForSeason: [SeriesForSeason]?
 
     
     enum CodingKeys: String, CodingKey {
