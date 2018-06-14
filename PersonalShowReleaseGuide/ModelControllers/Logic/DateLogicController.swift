@@ -31,56 +31,66 @@ class DateLogicController {
     // Iterates through [Season] to get the most recent season then returns the season number
     func findMostCurrentSeason(seriesID: Int) -> Int {
         
-        let seriesDictionary = TelevisionModelController.shared.seasonDictionary
-        let series = seriesDictionary[seriesID]
-        let seasons = series.map{$0.seasons}! //FIXME
-        
-        let seasonNumbers = seasons.compactMap( {$0.seasonNumber} ).reversed()
-        let seasonAirDates = seasons.compactMap( {$0.seasonAirDate} ).reversed()
-        
-        if seasonNumbers.count != seasonAirDates.count {
-            print("HUGE ISSUE! seasonNumbers & seasonAirDates are somehow not the same amount! \(#function)")
-        }
+        let entireSeries = TelevisionModelController.shared.entireSeries
         var mostCurrentSeason = -1
         
-        // Create season number based on today's date
-        for (seasonNumber, seasonAirDate) in zip(seasonNumbers, seasonAirDates) {
-            print("Most Current Season: \(seasonNumber) - \(seasonAirDate)\n")
-            if seasonAirDate >= today {
-                mostCurrentSeason = seasonNumber
-                break
-            } else if seasonAirDate < today {
-                mostCurrentSeason = seasonNumber
-                break
+        for series in entireSeries {
+            if seriesID == series.ID {
+                let seasons = series.seasons
+                let seasonNumbers = seasons.compactMap( {$0.seasonNumber ?? 0} ).reversed()
+                let seasonAirDates = seasons.compactMap( {$0.seasonAirDate ?? ""} ).reversed()
+                
+                if seasonNumbers.count != seasonAirDates.count {
+                    print("HUGE ISSUE! seasonNumbers & seasonAirDates are somehow not the same amount! \(#function)")
+                }
+                
+                // Create season number based on today's date
+                for (seasonNumber, seasonAirDate) in zip(seasonNumbers, seasonAirDates) {
+                    print("\nSeries: \(series.name) | Most Current Season: \(seasonNumber) - \(seasonAirDate)")
+                    if seasonAirDate >= today {
+                        mostCurrentSeason = seasonNumber
+                        break
+                    } else if seasonAirDate < today {
+                        mostCurrentSeason = seasonNumber
+                        break
+                    }
+                }
+                return mostCurrentSeason
             }
         }
         return mostCurrentSeason
     }
     
-    // Iterates through [Episode] to get the most recent episode then returns the season number
+    // Iterates through [Episode] to get the most recent episode number and episode air date
     func findMostCurrentEpisode(seriesID: Int) -> [Int : String] {
         
-        let episodeDictionary = TelevisionModelController.shared.episodeDictionary
-        let series = episodeDictionary[seriesID]
-        let episodes = series.map{$0.episodes}! //FIXME
+        let entireSeries = TelevisionModelController.shared.entireSeries
+        var mostCurrentEpisode: [Int : String] = [0 : ""]
         
-        let episodeNumbers = episodes.compactMap( {$0.episodeNumber} ).reversed()
-        let episodeAirDates = episodes.compactMap( { $0.episodeAirDate} ).reversed()
-        
-        if episodeNumbers.count != episodeAirDates.count {
-            print("HUGE ISSUE! episodeNumbers & episodeAirDates are somehow not the same amount! \(#function)")
-        }
-        var mostCurrentEpisode = [Int : String]()
-        
-        // Create episode number based on today's date
-        for (episodeNumber, episodeAirDate) in zip(episodeNumbers, episodeAirDates) {
-            print("Most Current Episode: \(episodeNumber) - \(episodeAirDate)\n")
-            if episodeAirDate >= today {
-                mostCurrentEpisode = [episodeNumber : episodeAirDate]
-                break
-            } else if episodeAirDate < today {
-                mostCurrentEpisode = [episodeNumber : episodeAirDate]
-                break
+        for series in entireSeries {
+            if series.ID == seriesID {
+                for season in series.seasons {
+                    guard let episodes = season.episodes else { continue }
+                    let episodeNumbers = episodes.compactMap( {$0.episodeNumber} ).reversed()
+                    let episodeAirDates = episodes.compactMap( {$0.episodeAirDate ?? ""} ).reversed()
+                    
+                    if episodeNumbers.count != episodeAirDates.count {
+                        print("HUGE ISSUE! episodeNumbers & episodeAirDates are somehow not the same amount! \(#function)")
+                    }
+                    
+                    // Create episode number based on today's date
+                    for (episodeNumber, episodeAirDate) in zip(episodeNumbers, episodeAirDates) {
+                        print("Series: \(series.name) - Season: \(season.seasonNumber ?? -1) | Most Current Episode: \(episodeNumber) - \(episodeAirDate)")
+                        if episodeAirDate >= today {
+                            mostCurrentEpisode = [episodeNumber : episodeAirDate]
+                            break
+                        } else if episodeAirDate < today {
+                            mostCurrentEpisode = [episodeNumber : episodeAirDate]
+                            break
+                        }
+                    }
+                    return mostCurrentEpisode
+                }
             }
         }
         return mostCurrentEpisode
@@ -100,5 +110,5 @@ class DateLogicController {
         let dateAsString = dateFormatterToString.string(from: date)
         
         return dateAsString
-        }
+    }
 }

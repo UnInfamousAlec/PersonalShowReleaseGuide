@@ -204,10 +204,12 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
+                                    <outlet property="seriesCurrentOrLastLabel" destination="yLF-5p-Z5m" id="EtO-RR-Fcs"/>
+                                    <outlet property="seriesNextOrLastAirDateLabel" destination="CYT-o0-iFt" id="0Af-Dk-eql"/>
+                                    <outlet property="seriesNextOrLastLabel" destination="CYT-o0-iFt" id="cIP-9O-mlf"/>
                                     <outlet property="showCurrentSeasonLabel" destination="xfU-OY-BPR" id="4yS-7O-P7M"/>
                                     <outlet property="showNextEpisodeAirDateLabel" destination="U9O-f0-0vK" id="UfZ-eJ-Ebj"/>
                                     <outlet property="showNextEpisodeLabel" destination="pEE-bx-fo1" id="2Vp-bR-CJi"/>
-                                    <outlet property="showTest" destination="CYT-o0-iFt" id="DJW-hE-5DC"/>
                                     <outlet property="showTitleLabel" destination="bEh-Va-ean" id="Hm7-eS-JVN"/>
                                 </connections>
                             </tableViewCell>

@@ -15,33 +15,27 @@ class TelevisionModelController {
     
     
     // MARK: - Properties
-    let baseShowURL = URL(string: "https://api.themoviedb.org/3/search/tv?")!
     var selectedLanguage = "en"
     var selectedCountry = "US"
     var adultContent = false
     var pageRequest = 1
     
-    var seriesDictionary = [Int : Series]()
-    var seasonDictionary = [Int : SeriesForSeason]()
-    var episodeDictionary = [Int : SeasonForEpisode]()
-    
+    var seriesIDs = [Int]()
     var entireSeries = [Series]()
     
     
     // MARK: - Methods
     // Get list of series' from search
-    func fetchSeries(by searchTerm: String, completion: @escaping(Bool) -> Void) {
+    func fetchSeriesIDs(by searchTerm: String, completion: @escaping(Bool) -> Void) {
         
-        seriesDictionary.removeAll()
-        seasonDictionary.removeAll()
-        episodeDictionary.removeAll()
-        entireSeries.removeAll()
+        self.entireSeries.removeAll()
         
-        let queries = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "query" : "\(searchTerm)", "language" : "\(selectedLanguage)-\(selectedCountry)", "page" : "\(pageRequest)"]
-        let requestSeriesURL = baseShowURL.withQueries(queries)!
-        print("\nRequested Series URL: \(requestSeriesURL)\n")
+        let beginPointSeriesURL = URL(string: "https://api.themoviedb.org/3/search/tv?")!
+        let endPointQuerySeriesURL = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "query" : "\(searchTerm)", "language" : "\(selectedLanguage)-\(selectedCountry)", "page" : "\(pageRequest)"]
+        let requestedSeriesURL = beginPointSeriesURL.withQueries(endPointQuerySeriesURL)!
+        print("\nRequested Search URL: \(requestedSeriesURL)\n")
         
-        URLSession.shared.dataTask(with: requestSeriesURL) { (data, response, error) in
+        URLSession.shared.dataTask(with: requestedSeriesURL) { (data, response, error) in
             
             if let error = error {
                 print("Error with series fetch request: \(error) - \(error.localizedDescription)\n")
@@ -57,15 +51,9 @@ class TelevisionModelController {
             if let data = data {
                 do {
                     let jsonDecoder = JSONDecoder()
-                    let seriesDictionary = try jsonDecoder.decode(SeriesResults.self, from: data)
-                    let seriesArray = seriesDictionary.results.compactMap( {$0} )
-                    seriesArray.forEach{ print("Series Results: \($0.name, $0.ID, $0.pilotAirDate, $0.language)") }; print("\n")
-                    self.entireSeries = seriesArray
-                    
-                    for series in seriesArray {
-                        self.seriesDictionary.updateValue(series, forKey: series.ID)
-                        self.removeNonEnglishFromShow(series: series)
-                    }
+                    let searchedDictionary = try jsonDecoder.decode(SearchedDictionary.self, from: data)
+                    let seriesIDs = searchedDictionary.results.map( {$0.ID} )
+                    self.seriesIDs = seriesIDs
                     completion(true)
                 } catch let error {
                     print("Error handling series data: \(error) - \(error.localizedDescription)\n")
@@ -77,19 +65,19 @@ class TelevisionModelController {
     }
     
     // Fetch Series Seasons
-    func fetchSeasons(withID seriesID: Int, completion: @escaping(Bool) -> Void) {
+    func fetchSeriesAndSeasons(withSeriesID seriesID: Int, completion: @escaping(Bool) -> Void) {
         
-        let baseSeasonURL = "https://api.themoviedb.org/3/tv/"
-        let midSeasonURL = "\(seriesID)" + "?"
-        let queries = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "language" : "en-US"]
+        let beginPointSeriesAndSeasonURL = "https://api.themoviedb.org/3/tv/"
+        let midPointSeriesAndSeasonURL = "\(seriesID)" + "?"
+        let endPointSeriesAndSeasonURL = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "language" : "en-US"]
         
-        let seasonURL = URL(string: baseSeasonURL + midSeasonURL)!.withQueries(queries)!
-        print("Requested Season URL: \(seasonURL)\n")
+        let seasonURL = URL(string: beginPointSeriesAndSeasonURL + midPointSeriesAndSeasonURL)!.withQueries(endPointSeriesAndSeasonURL)!
+        print("Requested Series & Season URL: \(seasonURL)\n")
         
         URLSession.shared.dataTask(with: seasonURL) { (data, response, error) in
             
             if let error = error {
-                print("Error with season fetch request: \(error) - \(error.localizedDescription)\n")
+                print("Error with series & season fetch request: \(error) - \(error.localizedDescription)\n")
                 completion(false)
                 return
             }
@@ -102,30 +90,26 @@ class TelevisionModelController {
             if let data = data {
                 do {
                     let jsonDecoder = JSONDecoder()
-                    let seriesForSeasonDictionary = try jsonDecoder.decode(SeriesForSeason.self, from: data)
+                    let seriesDictionary = try jsonDecoder.decode(Series.self, from: data)
                     
-                    for series in self.entireSeries {
-                        
+                    if self.checkIfSelected(seriesDictionary: seriesDictionary, isLanguage: self.selectedLanguage) == false {
+                        return
                     }
                     
-                    self.seasonDictionary.updateValue(seriesForSeasonDictionary, forKey: seriesForSeasonDictionary.seriesID)
+//                    for season in seriesDictionary.seasons {
+//                        if season.seasonAirDate == nil {
+//                            season.seasonAirDate = ""
+//                        }
+//                    }
                     
-                    let seasons = seriesForSeasonDictionary.seasons.map({ (season) -> Season in
-                        if season.seasonAirDate == nil {
-                            season.seasonAirDate = ""
-                            return season
-                        }
-                        return season
-                    })
+                    self.entireSeries.append(seriesDictionary)
                     
-                    print("Name: \(seriesForSeasonDictionary.nameOfSeason)  Series ID: \(seriesForSeasonDictionary.seriesID)  In Production: \(seriesForSeasonDictionary.inProduction)  Status: \(seriesForSeasonDictionary.status)")
-                    seasons.forEach{ print("\($0.seasonName!, $0.seasonNumber!, $0.seasonAirDate!)") }
+                    print("Name: \(seriesDictionary.name)  Series ID: \(seriesDictionary.ID)  Pilot Air Date: \(seriesDictionary.pilotAirDate)  Popularity: \(seriesDictionary.popularity)  In Production: \(seriesDictionary.inProduction)  Status: \(seriesDictionary.status)")
+                    seriesDictionary.seasons.forEach{ print("Name: \($0.seasonName ?? "N/A")  Number: \($0.seasonNumber ?? 0)  Air Date: \($0.seasonAirDate ?? "N/A")  ID: \($0.ID ?? 0)") } // Commenting this out doesn't require me to initialize SeasonForEpisode or Series???
                     
-                    self.addEpisodeToEmptySesaons(seriesID: seriesID, seriesForSeason: seriesForSeasonDictionary)
-                    self.seasonDictionary.updateValue(seriesForSeasonDictionary, forKey: seriesForSeasonDictionary.seriesID)
                     completion(true)
                 } catch let error {
-                    print("Error handling season data: \(error) - \(error.localizedDescription)\n")
+                    print("Error handling series & season data: \(error) - \(error.localizedDescription)\n")
                     completion(false)
                     return
                 }
@@ -134,13 +118,13 @@ class TelevisionModelController {
     }
     
     // Fetch Season Episode Numbers
-    func fetchEpisodes(withID seriesID: Int, andSeason seasonNumber: Int, completion: @escaping(Bool) -> Void) {
+    func fetchEpisodes(withSeasonID seasonID: Int, andSeason seasonNumber: Int, completion: @escaping(Bool) -> Void) {
         
-        let baseEpisodeURL = "https://api.themoviedb.org/3/tv/"
-        let midEpisodeURL = "\(seriesID)" + "/season/" + "\(seasonNumber)" + "?"
-        let queries = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "language" : "en-US"]
+        let beginPointEpisodeURL = "https://api.themoviedb.org/3/tv/"
+        let midPointEpisodeURL = "\(seasonID)" + "/season/" + "\(seasonNumber)" + "?"
+        let endPointEpisodeURL = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "language" : "en-US"]
         
-        let episodeURL = URL(string: baseEpisodeURL + midEpisodeURL)!.withQueries(queries)!
+        let episodeURL = URL(string: beginPointEpisodeURL + midPointEpisodeURL)!.withQueries(endPointEpisodeURL)!
         print("Requested Episode URL: \(episodeURL)\n")
         
         URLSession.shared.dataTask(with: episodeURL) { (data, response, error) in
@@ -160,17 +144,20 @@ class TelevisionModelController {
                 do {
                     let jsonDecoder = JSONDecoder()
                     let seasonForEpisodeDictionary = try jsonDecoder.decode(SeasonForEpisode.self, from: data)
-                    let episodes = seasonForEpisodeDictionary.episodes.map({ (episode) -> Episode in
-                        if episode.episodeAirDate == nil {
-                            episode.episodeAirDate = ""
-                            return episode
+                    let episodes = seasonForEpisodeDictionary.episodes
+                    
+                    let entireSeries = self.entireSeries
+                    for series in entireSeries {
+                        for season in series.seasons {
+                            if season.ID == seasonForEpisodeDictionary.ID {
+                                season.episodes = episodes
+                                
+                                print("\nSeries Name: \(series.name, series.pilotAirDate)  Season Number: \(seasonNumber)")
+                                episodes.forEach{ print("Name: \($0.episodeName)  Number: \($0.episodeNumber)  Air Date: \($0.episodeAirDate ?? "No Air Date!!!")") }
+                            }
                         }
-                        return episode
-                    })
+                    }
                     
-                    episodes.forEach{ print("Episode Details: \($0.episodeName, $0.episodeNumber, $0.episodeAirDate!)") }
-                    
-                    self.episodeDictionary.updateValue(seasonForEpisodeDictionary, forKey: seriesID)
                     completion(true)
                 } catch let error {
                     print("Error handling episode data: \(error) - \(error.localizedDescription)\n")
@@ -181,36 +168,22 @@ class TelevisionModelController {
         }.resume()
     }
     
-    func removeNonEnglishFromShow(series: Series) {
-        if series.language != "en" {
-            seriesDictionary.removeValue(forKey: series.ID)
+    func checkIfSelected(seriesDictionary series: Series, isLanguage selectedLanguage: String) -> Bool {
+        for language in series.languages {
+            if language == selectedLanguage { // Replace with selected language in setting later on
+                return true
+            }
         }
+        return false
     }
-    
-    func addEpisodeToEmptySesaons(seriesID: Int, seriesForSeason dictionary: SeriesForSeason) {
-        if dictionary.seasons.count == 0 {
-            createEmptyEpisode(seriesID: seriesID)
-        }
-    }
-    
-//    func checkForEmptyEpisode(seriesID: Int) -> Episode? {
-//        guard let seriesForSeason = self.seasonDictionary[seriesID] else { return nil}
-//        if  seriesForSeason.seasons.count != 0 {
-//            episodeDictionary.
-//        }
-//        return
-//    }
-    
-    func createEmptyEpisode(seriesID: Int) {
-        
-        let seasonID = 0; let episodeName = ""; let episodeNumber = 0; let episodeAirDate = ""; let episodeOverview = ""
-        let emptyEpisode = Episode(seasonID: seasonID, episodeName: episodeName, episodeNumber: episodeNumber, episodeAirDate: episodeAirDate, episodeOverview: episodeOverview)
-        
-        var emptyEpisodeArray = [Episode]()
-        emptyEpisodeArray.append(emptyEpisode)
-        
-        let seasonForEpisode = SeasonForEpisode(episodes: emptyEpisodeArray)
-        
-        self.episodeDictionary.updateValue(seasonForEpisode, forKey: seriesID)
+}
+
+
+// MARK: - URL Query Extention
+extension URL {
+    func withQueries(_ queries: [String: String]) -> URL? {
+        var components = URLComponents(url: self, resolvingAgainstBaseURL: true)
+        components?.queryItems = queries.compactMap{ URLQueryItem(name: $0.0, value: $0.1) }
+        return components?.url
     }
 }

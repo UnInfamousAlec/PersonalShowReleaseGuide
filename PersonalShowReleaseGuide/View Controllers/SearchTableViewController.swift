@@ -34,38 +34,39 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
     
     // MARK: - Methods
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-
+        
         guard let searchTerm = searchBar.text, searchTerm.count > 0 else { return }
         
         self.seriesIDsUsed.removeAll()
 
-        // Get array of Show objects to pass to the cell
-        TelevisionModelController.shared.fetchSeries(by: searchTerm) { (success) in
+        // Get array of Series IDs to fetch Series/Seasons with
+        TelevisionModelController.shared.fetchSeriesIDs(by: searchTerm) { (success) in
 
             if success {
-                let seriesDictionaryKeys = TelevisionModelController.shared.seriesDictionary.keys
-                for seriesID in seriesDictionaryKeys {
+                let seriesIDs = TelevisionModelController.shared.seriesIDs
+                for seriesID in seriesIDs {
                     
-                    TelevisionModelController.shared.fetchSeasons(withID: seriesID, completion: { (success) in
+                    TelevisionModelController.shared.fetchSeriesAndSeasons(withSeriesID: seriesID, completion: { (success) in
                         
                         if success {
                             let seasonNumber = DateLogicController.shared.findMostCurrentSeason(seriesID: seriesID)
-                            
                             
                             if seasonNumber == -1 {
                                 self.seriesIDsUsed.append(seriesID)
                                 return
                             }
                             
-                            TelevisionModelController.shared.fetchEpisodes(withID: seriesID, andSeason: seasonNumber, completion: { (success) in
+                            TelevisionModelController.shared.fetchEpisodes(withSeasonID: seriesID, andSeason: seasonNumber, completion: { (success) in
                                 
                                 if success {
                                     self.seriesIDsUsed.append(seriesID)
                                     
-                                    if self.seriesIDsUsed.count == seriesDictionaryKeys.count {
+                                    if self.seriesIDsUsed.count == TelevisionModelController.shared.entireSeries.count {
                                         
                                         DispatchQueue.main.async {
 //                                            searchBar.text = ""
+                                            TelevisionModelController.shared.entireSeries.sort(by: {$0.popularity > $1.popularity} )
+                                            TelevisionModelController.shared.entireSeries.forEach{ print($0.name, $0.popularity) }
                                             self.tableView.reloadData()
                                         }
                                     }
@@ -93,18 +94,13 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
 
     // Tableview datasource
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return TelevisionModelController.shared.seriesDictionary.count
+        return TelevisionModelController.shared.entireSeries.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as? SeriesTableViewCell else { return UITableViewCell() }
-        let seriesID = self.seriesIDsUsed[indexPath.row]
-        let series = TelevisionModelController.shared.seriesDictionary[seriesID]
-        let seasons = TelevisionModelController.shared.seasonDictionary[seriesID]
-        let episodes = TelevisionModelController.shared.episodeDictionary[seriesID]
+        let series = TelevisionModelController.shared.entireSeries[indexPath.row]
         cell.series = series
-        cell.seasons = seasons
-        cell.episodes = episodes
         return cell
     }
     
