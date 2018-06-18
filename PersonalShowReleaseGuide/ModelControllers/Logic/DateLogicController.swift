@@ -32,12 +32,12 @@ class DateLogicController {
     func findMostCurrentSeason(seriesID: Int) -> Int {
         
         let entireSeries = TelevisionModelController.shared.entireSeries
-        var mostCurrentSeason = -1
+        var mostCurrentSeasonNumber: Int = -1
         
         for series in entireSeries {
             if seriesID == series.ID {
                 let seasons = series.seasons
-                let seasonNumbers = seasons.compactMap( {$0.seasonNumber ?? 0} ).reversed()
+                let seasonNumbers = seasons.compactMap( {$0.seasonNumber ?? -1} ).reversed()
                 let seasonAirDates = seasons.compactMap( {$0.seasonAirDate ?? ""} ).reversed()
                 
                 if seasonNumbers.count != seasonAirDates.count {
@@ -46,45 +46,50 @@ class DateLogicController {
                 
                 // Create season number based on today's date
                 for (seasonNumber, seasonAirDate) in zip(seasonNumbers, seasonAirDates) {
-                    print("\nSeries: \(series.name) | Most Current Season: \(seasonNumber) - \(seasonAirDate)")
+                    print("\nSeries: \(series.name, series.ID) | Most Current Season: \(seasonNumber) - \(seasonAirDate)")
                     if seasonAirDate >= today {
-                        mostCurrentSeason = seasonNumber
+                        mostCurrentSeasonNumber = seasonNumber
                         break
                     } else if seasonAirDate < today {
-                        mostCurrentSeason = seasonNumber
+                        mostCurrentSeasonNumber = seasonNumber
                         break
                     }
                 }
-                return mostCurrentSeason
+                return mostCurrentSeasonNumber
             }
         }
-        return mostCurrentSeason
+        return mostCurrentSeasonNumber
     }
     
     // Iterates through [Episode] to get the most recent episode number and episode air date
     func findMostCurrentEpisode(seriesID: Int) -> [Int : String] {
         
         let entireSeries = TelevisionModelController.shared.entireSeries
-        var mostCurrentEpisode: [Int : String] = [0 : ""]
+        var mostCurrentEpisode: [Int : String] = [-1 : ""]
         
         for series in entireSeries {
             if series.ID == seriesID {
                 for season in series.seasons {
                     guard let episodes = season.episodes else { continue }
-                    let episodeNumbers = episodes.compactMap( {$0.episodeNumber} ).reversed()
-                    let episodeAirDates = episodes.compactMap( {$0.episodeAirDate ?? ""} ).reversed()
+                    let episodeNumbers = episodes.compactMap( {$0.episodeNumber} )//.reversed()
+                    let episodeAirDates = episodes.compactMap( {$0.episodeAirDate ?? ""} )//.reversed()
                     
                     if episodeNumbers.count != episodeAirDates.count {
                         print("HUGE ISSUE! episodeNumbers & episodeAirDates are somehow not the same amount! \(#function)")
                     }
                     
-                    // Create episode number based on today's date
+                    // Create episode number based on today's date // Need to restructure this based off of https://api.themoviedb.org/3/tv/66636/season/4?language=en-US&api_key=1f76e7734a01ecc55ff5054b1d2a3e82&page=1
+                    
                     for (episodeNumber, episodeAirDate) in zip(episodeNumbers, episodeAirDates) {
-                        print("Series: \(series.name) - Season: \(season.seasonNumber ?? -1) | Most Current Episode: \(episodeNumber) - \(episodeAirDate)")
-                        if episodeAirDate >= today {
+                        print("Series: \(series.name, series.ID) | Season: \(season.seasonNumber ?? -1) | Most Current Episode: \(episodeNumber) - \(episodeAirDate)")
+                        
+                        if episodeAirDate == today {
                             mostCurrentEpisode = [episodeNumber : episodeAirDate]
                             break
-                        } else if episodeAirDate < today {
+                        } else if episodeAirDate > today {
+                            mostCurrentEpisode = [episodeNumber : episodeAirDate]
+                            break
+                        } else if episodeAirDate == episodeAirDates.last {
                             mostCurrentEpisode = [episodeNumber : episodeAirDate]
                             break
                         }

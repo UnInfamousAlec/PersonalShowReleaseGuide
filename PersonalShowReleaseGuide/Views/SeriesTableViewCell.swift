@@ -11,25 +11,34 @@ import UIKit
 class SeriesTableViewCell: UITableViewCell {
     
     // MARK: - Outlets
-    @IBOutlet weak var showTitleLabel: UILabel!
-    @IBOutlet weak var seriesCurrentOrLastLabel: UILabel!
-    @IBOutlet weak var showCurrentSeasonLabel: UILabel!
-    @IBOutlet weak var seriesNextOrLastLabel: UILabel!
-    @IBOutlet weak var showNextEpisodeLabel: UILabel!
-    @IBOutlet weak var seriesNextOrLastAirDateLabel: UILabel!
-    @IBOutlet weak var showNextEpisodeAirDateLabel: UILabel!
+    @IBOutlet weak var seriesPoster: UIImageView!
+    @IBOutlet weak var seriesNameAndAirDateLabel: UILabel!
+    @IBOutlet weak var seasonNumberCurrentOrLastLabel: UILabel!
+    @IBOutlet weak var seasonNumberLabel: UILabel!
+    @IBOutlet weak var episodeNumberNextOrLastLabel: UILabel!
+    @IBOutlet weak var episodeNumberLabel: UILabel!
+    @IBOutlet weak var episodeNextOrLastAirDateLabel: UILabel!
+    @IBOutlet weak var episodeAirDateLabel: UILabel!
     
 
     // MARK: - Properties
+    let today = DateLogicController.shared.today
     var series: Series? {
         didSet {
             updateCellWithSeries()
             updateCellWithSeasonAndEpisode()
+            updateCellWithPoster()
         }
     }
     
     
     // MARK: - Methods
+    func updateCellWithPoster() {
+        guard let series = series else { return }
+        
+        seriesPoster.image = series.posterImage
+    }
+    
     func updateCellWithSeries() {
         guard let series = series else { return }
         let pilotAirDate = series.pilotAirDate ?? ""
@@ -49,17 +58,18 @@ class SeriesTableViewCell: UITableViewCell {
             airYear = "(Unknown)"
         }
         
-        self.showTitleLabel.text = "\(series.name) \(airYear)"
+        self.seriesNameAndAirDateLabel.text = "\(series.name) \(airYear)"
     }
     
     func updateCellWithSeasonAndEpisode() {
         guard let seriesID = series?.ID else { return }
         
         let seasonNumber = DateLogicController.shared.findMostCurrentSeason(seriesID: seriesID)
+        
         if seasonNumber == -1 {
-            showCurrentSeasonLabel.text = "N/A"
+            seasonNumberLabel.text = "?"
         } else {
-            showCurrentSeasonLabel.text = String(seasonNumber)
+            seasonNumberLabel.text = String(seasonNumber)
         }
         
         let episodes = DateLogicController.shared.findMostCurrentEpisode(seriesID: seriesID)
@@ -67,12 +77,27 @@ class SeriesTableViewCell: UITableViewCell {
         guard let episodeAirDate = episodes.values.first else { return }
         guard let episodeWithFormattedAirDate = DateLogicController.shared.formatAirDate(episodeAirDate: episodeAirDate) else { return }
         
-        showNextEpisodeLabel.text = String(episodeNumber)
+        if episodeNumber == -1 {
+            episodeNumberLabel.text = "?"
+        } else {
+            episodeNumberLabel.text = String(episodeNumber)
+        }
         
         if episodeAirDate == "" {
-            showNextEpisodeAirDateLabel.text = "Unknown Date"
-        } else {
-            showNextEpisodeAirDateLabel.text = String(episodeWithFormattedAirDate)
+            episodeAirDateLabel.text = "Unknown Date"
+        }
+        else if episodeAirDate == self.today {
+            episodeNextOrLastAirDateLabel.text = "Next Episode Airs Today!"
+            episodeAirDateLabel.text = String(episodeWithFormattedAirDate)
+        }
+        else if episodeAirDate < self.today {
+            seasonNumberCurrentOrLastLabel.text = "Last Season:"
+            episodeNumberNextOrLastLabel.text = "Last Episode:"
+            episodeNextOrLastAirDateLabel.text = "Last Episode Air Date:"
+            episodeAirDateLabel.text = String(episodeWithFormattedAirDate)
+        }
+        else if episodeAirDate > self.today {
+            episodeAirDateLabel.text = String(episodeWithFormattedAirDate)
         }
     }
 }

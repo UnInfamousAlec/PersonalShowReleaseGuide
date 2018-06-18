@@ -6,7 +6,7 @@
 //  Copyright © 2018 UnInfamous Games. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 class TelevisionModelController {
     
@@ -104,7 +104,7 @@ class TelevisionModelController {
                     
                     self.entireSeries.append(seriesDictionary)
                     
-                    print("Name: \(seriesDictionary.name)  Series ID: \(seriesDictionary.ID)  Pilot Air Date: \(seriesDictionary.pilotAirDate)  Popularity: \(seriesDictionary.popularity)  In Production: \(seriesDictionary.inProduction)  Status: \(seriesDictionary.status)")
+                    print("Name: \(seriesDictionary.name)  Series ID: \(seriesDictionary.ID)  Pilot Air Date: \(seriesDictionary.pilotAirDate ?? "N/A")  Popularity: \(seriesDictionary.popularity)  In Production: \(seriesDictionary.inProduction)  Status: \(seriesDictionary.status)")
                     seriesDictionary.seasons.forEach{ print("Name: \($0.seasonName ?? "N/A")  Number: \($0.seasonNumber ?? 0)  Air Date: \($0.seasonAirDate ?? "N/A")  ID: \($0.ID ?? 0)") } // Commenting this out doesn't require me to initialize SeasonForEpisode or Series???
                     
                     completion(true)
@@ -152,7 +152,7 @@ class TelevisionModelController {
                             if season.ID == seasonForEpisodeDictionary.ID {
                                 season.episodes = episodes
                                 
-                                print("\nSeries Name: \(series.name, series.pilotAirDate)  Season Number: \(seasonNumber)")
+                                print("\nSeries Name: \(series.name, series.pilotAirDate ?? "N/A")  Season Number: \(seasonNumber)")
                                 episodes.forEach{ print("Name: \($0.episodeName)  Number: \($0.episodeNumber)  Air Date: \($0.episodeAirDate ?? "No Air Date!!!")") }
                             }
                         }
@@ -164,6 +164,103 @@ class TelevisionModelController {
                     completion(false)
                     return
                 }
+            }
+        }.resume()
+    }
+    
+    func fetchSeriesPoster(forSeries series: Series, completion: @escaping(Bool) -> Void) {
+        
+        let beginPointPosterURL = "https://image.tmdb.org/t/p/"
+        let midPointSizePosterURL = "w500"
+        guard let endPointPosterURL = series.posterEndPoint else { return }
+        
+        let posterURL = URL(string: beginPointPosterURL + midPointSizePosterURL + endPointPosterURL)!
+        print(posterURL)
+        
+        URLSession.shared.dataTask(with: posterURL) { (data, response, error) in
+            
+            if let error = error {
+                print("Error with poster fetch request: \(error) - \(error.localizedDescription)"); print("\n")
+                completion(false)
+                return
+            }
+            
+            if let response = response {
+                print("TMDB Poster Response: \(response)\n")
+                completion(false)
+            }
+            
+            if let data = data {
+                let poster = UIImage(data: data)
+                series.posterImage = poster
+                completion(true)
+            }
+        }.resume()
+    }
+    
+    func fetchSeriesPoster1(withSeriesID seriesID: Int, completion: @escaping(Bool) -> Void) {
+        
+        for series in self.entireSeries {
+            if series.ID == seriesID {
+                
+                let beginPointPosterURL = "https://image.tmdb.org/t/p/"
+                let midPointSizePosterURL = "w500"
+                guard let endPointPosterURL = series.posterEndPoint else { return }
+                
+                let posterURL = URL(string: beginPointPosterURL + midPointSizePosterURL + endPointPosterURL)!
+                print(posterURL)
+                
+                URLSession.shared.dataTask(with: posterURL) { (data, response, error) in
+                    
+                    if let error = error {
+                        print("Error with poster fetch request: \(error) - \(error.localizedDescription)"); print("\n")
+                        completion(false)
+                        return
+                    }
+                    
+                    if let response = response {
+                        print("TMDB Poster Response: \(response)\n")
+                        completion(false)
+                    }
+                    
+                    if let data = data {
+                        let poster = UIImage(data: data)
+                        series.posterImage = poster
+                        completion(true)
+                    }
+                }.resume()
+            }
+        }
+    }
+    
+    func fetchSeriesNetworkLogo(forSeries series: Series, completion: @escaping(Bool) -> Void) {
+        
+        guard let logoImageEndPoint = series.networks.first?.logoEndPoint else { return }
+        
+        let beginPointLogoURL = "https://image.tmdb.org/t/p/"
+        let midPointSizeLogoURL = "w300"
+        let endPointLogoURL = logoImageEndPoint
+        
+        let logoURL = URL(string: beginPointLogoURL + midPointSizeLogoURL + endPointLogoURL)!
+        print(logoURL)
+        
+        URLSession.shared.dataTask(with: logoURL) { (data, response, error) in
+            
+            if let error = error {
+                print("Error with logo fetch request: \(error) - \(error.localizedDescription)"); print("\n")
+                completion(false)
+                return
+            }
+            
+            if let response = response {
+                print("TMDB Logo Response: \(response)\n")
+                completion(false)
+            }
+            
+            if let data = data {
+                let logo = UIImage(data: data)
+                series.logoImage = logo
+                completion(true)
             }
         }.resume()
     }

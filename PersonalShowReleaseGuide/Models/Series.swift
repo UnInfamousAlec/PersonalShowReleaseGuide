@@ -6,7 +6,7 @@
 //  Copyright © 2018 UnInfamous Games. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 // Based on https://api.themoviedb.org/3/search/tv?api_key=1f76e7734a01ecc55ff5054b1d2a3e82&query=suits&language=en-US
 struct SearchedDictionary: Decodable {
@@ -23,24 +23,30 @@ struct SeriesResults: Decodable {
 }
 
 // Based on https://api.themoviedb.org/3/tv/37680?api_key=1f76e7734a01ecc55ff5054b1d2a3e82&language=en-US
-class Series: Decodable {
-    let ID: Int
-    let name: String
-    let languages: [String]
-    var pilotAirDate: String?
-    let popularity: Double
-    let posterEndPoint: String?
-    let overview: String
-    let inProduction: Bool
-    let status: String
-    var seasons: [Season]
-    let networks: [Network]
+class Series: Decodable {                   // Show on Detail?
+    let ID: Int                             // NO
+    let name: String                        // YES | Left
+    let languages: [String]                 // No
+    var pilotAirDate: String?               // Yes or (Unknown) | Left
+    let seasonCount: Int                    // Yes | Left
+    let episodeCount: Int                   // Yes | Left
+    let popularity: Double                  // No
+    let posterEndPoint: String?             // Yes or stock | Left
+    var posterImage: UIImage?
+    var logoImage: UIImage?
+    let overview: String                    // YES | Left
+    let inProduction: Bool                  // Maybe?
+    let status: String                      // YES | Left
+    var seasons: [Season]                   // YES |
+    let networks: [Network]                 // Yes |
     
     enum CodingKeys: String, CodingKey {
         case ID = "id"
         case name = "original_name"
         case languages
         case pilotAirDate = "first_air_date"
+        case seasonCount = "number_of_seasons"
+        case episodeCount = "number_of_episodes"
         case popularity
         case posterEndPoint = "poster_path"
         case overview
@@ -66,11 +72,11 @@ class Series: Decodable {
 }
 
 class Season: Decodable {
-    var ID: Int?
-    var seasonName: String?
-    var seasonNumber: Int?
-    var seasonAirDate: String?
-    var episodes: [Episode]?
+    var ID: Int?                            // NO
+    var seasonName: String?                 // Maybe?
+    var seasonNumber: Int?                  // YES | Right in section
+    var seasonAirDate: String?              // Yes
+    var episodes: [Episode]?                // YES |
     
     enum CodingKeys: String, CodingKey {
         case ID = "id"
@@ -82,8 +88,8 @@ class Season: Decodable {
 }
 
 class Network: Decodable {
-    let name: String
-    let logoEndPoint: String?
+    let name: String                        // Yes, If no Logo | Left
+    let logoEndPoint: String?               // Yes if present | Left
     
     enum CodingKeys: String, CodingKey {
         case name
@@ -98,8 +104,8 @@ class Network: Decodable {
 
 // Based on https://api.themoviedb.org/3/tv/37680/season/1?api_key=1f76e7734a01ecc55ff5054b1d2a3e82&language=en-US
 class SeasonForEpisode: Decodable {
-    let ID: Int
-    let episodes: [Episode]
+    let ID: Int                             // NO
+    let episodes: [Episode]                 // YES |
     
     enum CodingKeys: String, CodingKey {
         case ID = "id"
@@ -113,10 +119,10 @@ class SeasonForEpisode: Decodable {
 }
 
 class Episode: Decodable {
-    let episodeName: String
-    let episodeNumber: Int
-    var episodeAirDate: String?
-    let episodeOverview: String
+    let episodeName: String                 // Yes | Right
+    let episodeNumber: Int                  // YES | Right
+    var episodeAirDate: String?             // YES | Right
+    let episodeOverview: String //Optional? // Yes?
     
     enum CodingKeys: String, CodingKey {
         case episodeName = "name"

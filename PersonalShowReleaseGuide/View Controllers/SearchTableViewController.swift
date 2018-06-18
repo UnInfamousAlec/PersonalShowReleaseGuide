@@ -8,11 +8,12 @@
 
 import UIKit
 
-class SearchTableViewController: UITableViewController, UISearchBarDelegate {
+class SearchTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
     
     static let shared = SearchTableViewController()
 
     // MARK: - Outlets
+    @IBOutlet weak var showTableView: UITableView!
     @IBOutlet weak var showSearchBar: UISearchBar!
     @IBOutlet weak var showSegmentedControl: UISegmentedControl!
     
@@ -25,10 +26,15 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        showTableView.dataSource = self
+        showTableView.delegate = self
+        showSearchBar.delegate = self
+        
         DateLogicController.shared.currentDate()
         showSegmentedControl.layer.cornerRadius = 0
         showSegmentedControl.layer.borderWidth = 1
-        showSearchBar.text = "if" // For Mock purposes
+        showSearchBar.text = "suits" // For Mock purposes
+        navigationController?.hidesBarsOnSwipe = true
     }
     
     
@@ -56,6 +62,12 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
                                 return
                             }
                             
+                            TelevisionModelController.shared.fetchSeriesPoster1(withSeriesID: seriesID, completion: { (success) in
+                                if !success {
+                                    print("Unable to fetch Poster for: \(seriesID)")
+                                }
+                            })
+                            
                             TelevisionModelController.shared.fetchEpisodes(withSeasonID: seriesID, andSeason: seasonNumber, completion: { (success) in
                                 
                                 if success {
@@ -64,55 +76,93 @@ class SearchTableViewController: UITableViewController, UISearchBarDelegate {
                                     if self.seriesIDsUsed.count == TelevisionModelController.shared.entireSeries.count {
                                         
                                         DispatchQueue.main.async {
-//                                            searchBar.text = ""
+                                            searchBar.text = ""
                                             TelevisionModelController.shared.entireSeries.sort(by: {$0.popularity > $1.popularity} )
                                             TelevisionModelController.shared.entireSeries.forEach{ print($0.name, $0.popularity) }
-                                            self.tableView.reloadData()
+                                            self.showTableView.reloadData()
                                         }
                                     }
                                 }
                                 
                                 if !success {
+                                    self.networkAlert()
                                     print("Error fetching episodes: \(Error.self)")
                                 }
                             })
                         }
                         
                         if !success {
+                            self.networkAlert()
                             print("Error fetching seasons: \(Error.self)")
                         }
                     })
                 }
                 
                 if !success {
+                    self.networkAlert()
                     print("Error fetching shows: \(Error.self)")
                 }
             }
         }
     }
+    
+    func networkAlert() {
+        let alertController = UIAlertController(title: "Network Error", message: "Please check your network connection and try again", preferredStyle: .alert)
+        let dismissAction = UIAlertAction(title: "Dismiss", style: .cancel, handler: nil)
+        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) in
+            
+            guard let settingsURL = URL(string: "App-Prefs:root") else { return }
+            
+            if UIApplication.shared.canOpenURL(settingsURL) {
+                UIApplication.shared.open(settingsURL, completionHandler: nil)
+            }
+        }
+        
+        alertController.addAction(dismissAction)
+        alertController.addAction(settingsAction)
+        present(alertController, animated: true)
+    }
 
 
     // Tableview datasource
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if showSegmentedControl.selectedSegmentIndex == 0 {
+            return 80
+        } else {
+            return 125
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return TelevisionModelController.shared.entireSeries.count
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ShowCell", for: indexPath) as? SeriesTableViewCell else { return UITableViewCell() }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "seriesCell", for: indexPath) as? SeriesTableViewCell else { return UITableViewCell() }
         let series = TelevisionModelController.shared.entireSeries[indexPath.row]
         cell.series = series
         return cell
     }
     
-//    func sortSeriesDictionary(series: Series) -> [Series] {
-//        let sortedSeries = [Series]
-//        for show in series {
-//            
-//        }
+    
+    // MARK: - Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "fromSeriesToDetailVC" {
+            guard let detailVC = segue.destination as? SearchDetailViewController else { return }
+            guard let indexPath = showTableView.indexPathForSelectedRow else { return }
+            let selectedSeries = TelevisionModelController.shared.entireSeries[indexPath.row]
+            detailVC.series = selectedSeries
+        }
+    }
+    
+//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        let searchDetailSB = UIStoryboard(name: "Main", bundle: .main)
+//        let searchDetailVC = searchDetailSB.instantiateViewController(withIdentifier: "SearchDetailVC") as! SearchDetailViewController
+//        let selectedSeries = TelevisionModelController.shared.entireSeries[indexPath.row]
+//        searchDetailVC.series = selectedSeries
+//        navigationController?.pushViewController(searchDetailVC, animated: true)
 //    }
-//        override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//
-//        }
 }
 
 //// Change color on a label

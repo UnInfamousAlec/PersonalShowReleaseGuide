@@ -10,15 +10,27 @@ import UIKit
 
 class EpisodeTableViewCell: UITableViewCell {
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+    // MARK: - Outlets
+    @IBOutlet weak var episodeNumberLabel: UILabel!
+    @IBOutlet weak var episodeNameLabel: UILabel!
+    @IBOutlet weak var episodeAirDateLabel: UILabel!
+    @IBOutlet weak var episodeOverviewLabel: UILabel!
+    
+    
+    // MARK: - Properties
+    var episode: Episode? {
+        didSet {
+            updateEpisode()
+        }
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    
+    // MARK: - Methods
+    func updateEpisode() {
+        guard let episode = episode else { return }
+        episodeNumberLabel.text = "Episode \(episode.episodeNumber)"
+        episodeNameLabel.text = episode.episodeName
+        episodeAirDateLabel.text = episode.episodeAirDate
+        episodeOverviewLabel.text = episode.episodeOverview
     }
-
 }

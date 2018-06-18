@@ -16,6 +16,7 @@
 		F486E1C220D1953D00B02E56 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = F486E1C120D1953D00B02E56 /* User.swift */; };
 		F49D526020C8BDB9008CC1FE /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49D525F20C8BDB9008CC1FE /* Language.swift */; };
 		F49D526220C9A22C008CC1FE /* MovieTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49D526120C9A22C008CC1FE /* MovieTableViewCell.swift */; };
+		F4CB212120D2F70D004B12EE /* EpisodeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4CB212020D2F70D004B12EE /* EpisodeTableViewCell.swift */; };
 		F4F851AC20927083003591AC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F851AB20927083003591AC /* AppDelegate.swift */; };
 		F4F851B120927083003591AC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4F851AF20927083003591AC /* Main.storyboard */; };
 		F4F851B320927083003591AC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4F851B220927083003591AC /* Assets.xcassets */; };
@@ -35,6 +36,7 @@
 		F486E1C120D1953D00B02E56 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		F49D525F20C8BDB9008CC1FE /* Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
 		F49D526120C9A22C008CC1FE /* MovieTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieTableViewCell.swift; sourceTree = "<group>"; };
+		F4CB212020D2F70D004B12EE /* EpisodeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeTableViewCell.swift; sourceTree = "<group>"; };
 		F4F851A820927083003591AC /* PersonalShowReleaseGuide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PersonalShowReleaseGuide.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4F851AB20927083003591AC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F4F851B020927083003591AC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				F4F851CD20928481003591AC /* SeriesTableViewCell.swift */,
+				F4CB212020D2F70D004B12EE /* EpisodeTableViewCell.swift */,
 				F49D526120C9A22C008CC1FE /* MovieTableViewCell.swift */,
 			);
 			path = Views;
@@ -225,6 +228,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F486E1C220D1953D00B02E56 /* User.swift in Sources */,
+				F4CB212120D2F70D004B12EE /* EpisodeTableViewCell.swift in Sources */,
 				F442E9DB2092B5FD00784053 /* Series.swift in Sources */,
 				F49D526020C8BDB9008CC1FE /* Language.swift in Sources */,
 				F4F851CE20928481003591AC /* SeriesTableViewCell.swift in Sources */,
@@ -387,10 +391,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "UnInfamous-Games.PersonalShowReleaseGuide";
+				PRODUCT_BUNDLE_IDENTIFIER = SmartAlecApps.PersonalShowReleaseGuide;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -405,10 +409,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "UnInfamous-Games.PersonalShowReleaseGuide";
+				PRODUCT_BUNDLE_IDENTIFIER = SmartAlecApps.PersonalShowReleaseGuide;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
