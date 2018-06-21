@@ -27,9 +27,7 @@ class TelevisionModelController {
     // MARK: - Methods
     // Get list of series' from search
     func fetchSeriesIDs(by searchTerm: String, completion: @escaping(Bool) -> Void) {
-        
-        self.entireSeries.removeAll()
-        
+                
         let beginPointSeriesURL = URL(string: "https://api.themoviedb.org/3/search/tv?")!
         let endPointQuerySeriesURL = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "query" : "\(searchTerm)", "language" : "\(selectedLanguage)-\(selectedCountry)", "page" : "\(pageRequest)"]
         let requestedSeriesURL = beginPointSeriesURL.withQueries(endPointQuerySeriesURL)!
@@ -38,7 +36,7 @@ class TelevisionModelController {
         URLSession.shared.dataTask(with: requestedSeriesURL) { (data, response, error) in
             
             if let error = error {
-                print("Error with series fetch request: \(error) - \(error.localizedDescription)\n")
+                print("Error with search fetch request: \(requestedSeriesURL) \(error) - \(error.localizedDescription)\n")
                 completion(false)
                 return
             }
@@ -56,7 +54,7 @@ class TelevisionModelController {
                     self.seriesIDs = seriesIDs
                     completion(true)
                 } catch let error {
-                    print("Error handling series data: \(error) - \(error.localizedDescription)\n")
+                    print("Error handling search data: \(requestedSeriesURL) | \(error) - \(error.localizedDescription)\n")
                     completion(false)
                     return
                 }
@@ -71,13 +69,13 @@ class TelevisionModelController {
         let midPointSeriesAndSeasonURL = "\(seriesID)" + "?"
         let endPointSeriesAndSeasonURL = ["api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "language" : "en-US"]
         
-        let seasonURL = URL(string: beginPointSeriesAndSeasonURL + midPointSeriesAndSeasonURL)!.withQueries(endPointSeriesAndSeasonURL)!
-        print("Requested Series & Season URL: \(seasonURL)\n")
+        let seriesAndSeasonURL = URL(string: beginPointSeriesAndSeasonURL + midPointSeriesAndSeasonURL)!.withQueries(endPointSeriesAndSeasonURL)!
+        print("Requested Series & Season URL: \(seriesAndSeasonURL)\n")
         
-        URLSession.shared.dataTask(with: seasonURL) { (data, response, error) in
+        URLSession.shared.dataTask(with: seriesAndSeasonURL) { (data, response, error) in
             
             if let error = error {
-                print("Error with series & season fetch request: \(error) - \(error.localizedDescription)\n")
+                print("Error with series & season fetch request: \(seriesAndSeasonURL) | \(error) - \(error.localizedDescription)\n")
                 completion(false)
                 return
             }
@@ -93,6 +91,7 @@ class TelevisionModelController {
                     let seriesDictionary = try jsonDecoder.decode(Series.self, from: data)
                     
                     if self.checkIfSelected(seriesDictionary: seriesDictionary, isLanguage: self.selectedLanguage) == false {
+                        print("Removed non-selected language \(seriesID)")
                         return
                     }
                     
@@ -109,8 +108,8 @@ class TelevisionModelController {
                     
                     completion(true)
                 } catch let error {
-                    print("Error handling series & season data: \(error) - \(error.localizedDescription)\n")
-                    completion(false)
+                    print("Error handling series & season data: \(seriesAndSeasonURL) | \(error) - \(error.localizedDescription)\n")
+                    completion(false) // try searching "r" later
                     return
                 }
             }
@@ -130,7 +129,7 @@ class TelevisionModelController {
         URLSession.shared.dataTask(with: episodeURL) { (data, response, error) in
             
             if let error = error {
-                print("Error with episode fetch request: \(error) - \(error.localizedDescription)"); print("\n")
+                print("Error with episode fetch request: \(episodeURL) | \(error) - \(error.localizedDescription)"); print("\n")
                 completion(false)
                 return
             }
@@ -160,7 +159,7 @@ class TelevisionModelController {
                     
                     completion(true)
                 } catch let error {
-                    print("Error handling episode data: \(error) - \(error.localizedDescription)\n")
+                    print("Error handling episode data: \(episodeURL) | \(error) - \(error.localizedDescription)\n")
                     completion(false)
                     return
                 }
@@ -180,7 +179,7 @@ class TelevisionModelController {
         URLSession.shared.dataTask(with: posterURL) { (data, response, error) in
             
             if let error = error {
-                print("Error with poster fetch request: \(error) - \(error.localizedDescription)"); print("\n")
+                print("Error with poster fetch request: \(posterURL) | \(error) - \(error.localizedDescription)"); print("\n")
                 completion(false)
                 return
             }
@@ -213,15 +212,15 @@ class TelevisionModelController {
                 URLSession.shared.dataTask(with: posterURL) { (data, response, error) in
                     
                     if let error = error {
-                        print("Error with poster fetch request: \(error) - \(error.localizedDescription)"); print("\n")
+                        print("Error with poster fetch request: \(posterURL) | \(error) - \(error.localizedDescription)"); print("\n")
                         completion(false)
                         return
                     }
                     
-                    if let response = response {
-                        print("TMDB Poster Response: \(response)\n")
-                        completion(false)
-                    }
+//                    if let response = response {
+//                        print("TMDB Poster Response: \(response)\n")
+//                        completion(false)
+//                    }
                     
                     if let data = data {
                         let poster = UIImage(data: data)
@@ -247,15 +246,15 @@ class TelevisionModelController {
         URLSession.shared.dataTask(with: logoURL) { (data, response, error) in
             
             if let error = error {
-                print("Error with logo fetch request: \(error) - \(error.localizedDescription)"); print("\n")
+                print("Error with logo fetch request: \(logoURL) | \(error) - \(error.localizedDescription)"); print("\n")
                 completion(false)
                 return
             }
             
-            if let response = response {
-                print("TMDB Logo Response: \(response)\n")
-                completion(false)
-            }
+//            if let response = response {
+//                print("TMDB Logo Response: \(response)\n")
+//                completion(false)
+//            }
             
             if let data = data {
                 let logo = UIImage(data: data)
@@ -267,7 +266,7 @@ class TelevisionModelController {
     
     func checkIfSelected(seriesDictionary series: Series, isLanguage selectedLanguage: String) -> Bool {
         for language in series.languages {
-            if language == selectedLanguage { // Replace with selected language in setting later on
+            if language == selectedLanguage {
                 return true
             }
         }

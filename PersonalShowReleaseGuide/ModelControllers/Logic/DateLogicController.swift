@@ -81,7 +81,7 @@ class DateLogicController {
                     // Create episode number based on today's date // Need to restructure this based off of https://api.themoviedb.org/3/tv/66636/season/4?language=en-US&api_key=1f76e7734a01ecc55ff5054b1d2a3e82&page=1
                     
                     for (episodeNumber, episodeAirDate) in zip(episodeNumbers, episodeAirDates) {
-                        print("Series: \(series.name, series.ID) | Season: \(season.seasonNumber ?? -1) | Most Current Episode: \(episodeNumber) - \(episodeAirDate)")
+                        print("Series: \(series.name, series.ID) | Most Current Episode: \(episodeNumber) - \(episodeAirDate)")
                         
                         if episodeAirDate == today {
                             mostCurrentEpisode = [episodeNumber : episodeAirDate]
@@ -101,7 +101,7 @@ class DateLogicController {
         return mostCurrentEpisode
     }
     
-    func formatAirDate(episodeAirDate: String) -> String? {
+    func formatAirDate(withFormat format: String, forDate episodeAirDate: String) -> String? {
 //        let selectedLanguage = TelevisionModelController.shared.selectedLanguage
 //        let selectedCountry = TelevisionModelController.shared.selectedCountry
 //        dateFormatter.locale = Locale(identifier: "\(selectedLanguage)_\(selectedCountry)")
@@ -111,7 +111,7 @@ class DateLogicController {
         guard let date = dateFormatterToDate.date(from: episodeAirDate) else { return episodeAirDate }
         
         let dateFormatterToString = DateFormatter()
-        dateFormatterToString.dateFormat = "MMMM dd, YYYY"
+        dateFormatterToString.dateFormat = format
         let dateAsString = dateFormatterToString.string(from: date)
         
         return dateAsString

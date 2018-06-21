@@ -33,8 +33,10 @@ class SearchTableViewController: UIViewController, UITableViewDataSource, UITabl
         DateLogicController.shared.currentDate()
         showSegmentedControl.layer.cornerRadius = 0
         showSegmentedControl.layer.borderWidth = 1
-        showSearchBar.text = "suits" // For Mock purposes
+        showSearchBar.text = "how" // For Mock purposes
+        
         navigationController?.hidesBarsOnSwipe = true
+        showTableView.keyboardDismissMode = .onDrag
     }
     
     
@@ -43,9 +45,14 @@ class SearchTableViewController: UIViewController, UITableViewDataSource, UITabl
         
         guard let searchTerm = searchBar.text, searchTerm.count > 0 else { return }
         
+        searchBar.resignFirstResponder()
+        
+        let rows = TelevisionModelController.shared.entireSeries.count
+        
         self.seriesIDsUsed.removeAll()
-
-        // Get array of Series IDs to fetch Series/Seasons with
+        TelevisionModelController.shared.entireSeries.removeAll()
+        showTableView.deleteRows(at: (0..<rows).map({ (i) in IndexPath(row: i, section: 0)}), with: .automatic)
+        
         TelevisionModelController.shared.fetchSeriesIDs(by: searchTerm) { (success) in
 
             if success {
@@ -64,7 +71,7 @@ class SearchTableViewController: UIViewController, UITableViewDataSource, UITabl
                             
                             TelevisionModelController.shared.fetchSeriesPoster1(withSeriesID: seriesID, completion: { (success) in
                                 if !success {
-                                    print("Unable to fetch Poster for: \(seriesID)")
+                                    print("Unable to fetch Poster1 for: \(seriesID)")
                                 }
                             })
                             
@@ -139,8 +146,12 @@ class SearchTableViewController: UIViewController, UITableViewDataSource, UITabl
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "seriesCell", for: indexPath) as? SeriesTableViewCell else { return UITableViewCell() }
+        
         let series = TelevisionModelController.shared.entireSeries[indexPath.row]
         cell.series = series
+        cell.alpha = 0
+        
+        UIView.animate(withDuration: 0.75, animations:{ cell.alpha = 1} )
         return cell
     }
     

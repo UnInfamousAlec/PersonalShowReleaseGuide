@@ -23,6 +23,7 @@ class SeriesTableViewCell: UITableViewCell {
 
     // MARK: - Properties
     let today = DateLogicController.shared.today
+    let dateFormat = "MMMM dd, YYYY"
     var series: Series? {
         didSet {
             updateCellWithSeries()
@@ -75,7 +76,7 @@ class SeriesTableViewCell: UITableViewCell {
         let episodes = DateLogicController.shared.findMostCurrentEpisode(seriesID: seriesID)
         guard let episodeNumber = episodes.keys.first else { return }
         guard let episodeAirDate = episodes.values.first else { return }
-        guard let episodeWithFormattedAirDate = DateLogicController.shared.formatAirDate(episodeAirDate: episodeAirDate) else { return }
+        guard let episodeWithFormattedAirDate = DateLogicController.shared.formatAirDate(withFormat: dateFormat, forDate: episodeAirDate) else { return }
         
         if episodeNumber == -1 {
             episodeNumberLabel.text = "?"
