@@ -10,6 +10,9 @@
 		F429102A2095321300F45336 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42910292095321300F45336 /* LoginViewController.swift */; };
 		F432C0772092D7A000876291 /* DateLogicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F432C0762092D7A000876291 /* DateLogicController.swift */; };
 		F442E9DB2092B5FD00784053 /* Series.swift in Sources */ = {isa = PBXBuildFile; fileRef = F442E9DA2092B5FD00784053 /* Series.swift */; };
+		F4801DC720DB381200A3F2A5 /* ArtworkTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4801DC620DB381200A3F2A5 /* ArtworkTableViewCell.swift */; };
+		F4801DC920DB3F3200A3F2A5 /* ArtworkModelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4801DC820DB3F3200A3F2A5 /* ArtworkModelController.swift */; };
+		F4801DCB20DC3D8200A3F2A5 /* Artwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4801DCA20DC3D8200A3F2A5 /* Artwork.swift */; };
 		F482ACA220D01DB10056B23C /* SearchDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F482ACA120D01DB10056B23C /* SearchDetailViewController.swift */; };
 		F482ACA420D01E1F0056B23C /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = F482ACA320D01E1F0056B23C /* Movie.swift */; };
 		F482ACA620D01E4C0056B23C /* MovieModelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F482ACA520D01E4C0056B23C /* MovieModelController.swift */; };
@@ -30,6 +33,9 @@
 		F42910292095321300F45336 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		F432C0762092D7A000876291 /* DateLogicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateLogicController.swift; sourceTree = "<group>"; };
 		F442E9DA2092B5FD00784053 /* Series.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Series.swift; sourceTree = "<group>"; };
+		F4801DC620DB381200A3F2A5 /* ArtworkTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkTableViewCell.swift; sourceTree = "<group>"; };
+		F4801DC820DB3F3200A3F2A5 /* ArtworkModelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkModelController.swift; sourceTree = "<group>"; };
+		F4801DCA20DC3D8200A3F2A5 /* Artwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Artwork.swift; sourceTree = "<group>"; };
 		F482ACA120D01DB10056B23C /* SearchDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchDetailViewController.swift; sourceTree = "<group>"; };
 		F482ACA320D01E1F0056B23C /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
 		F482ACA520D01E4C0056B23C /* MovieModelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieModelController.swift; sourceTree = "<group>"; };
@@ -118,9 +124,10 @@
 		F4F851BF209272E1003591AC /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				F4801DC620DB381200A3F2A5 /* ArtworkTableViewCell.swift */,
 				F4F851CD20928481003591AC /* SeriesTableViewCell.swift */,
-				F4CB212020D2F70D004B12EE /* EpisodeTableViewCell.swift */,
 				F49D526120C9A22C008CC1FE /* MovieTableViewCell.swift */,
+				F4CB212020D2F70D004B12EE /* EpisodeTableViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -138,6 +145,7 @@
 		F4F851C1209272F0003591AC /* ModelControllers */ = {
 			isa = PBXGroup;
 			children = (
+				F4801DC820DB3F3200A3F2A5 /* ArtworkModelController.swift */,
 				F4F851C920927EF2003591AC /* TelevisionModelController.swift */,
 				F482ACA520D01E4C0056B23C /* MovieModelController.swift */,
 				F432C0752092D69700876291 /* Logic */,
@@ -151,6 +159,7 @@
 				F486E1C120D1953D00B02E56 /* User.swift */,
 				F442E9DA2092B5FD00784053 /* Series.swift */,
 				F482ACA320D01E1F0056B23C /* Movie.swift */,
+				F4801DCA20DC3D8200A3F2A5 /* Artwork.swift */,
 				F49D525F20C8BDB9008CC1FE /* Language.swift */,
 			);
 			path = Models;
@@ -229,10 +238,13 @@
 			files = (
 				F486E1C220D1953D00B02E56 /* User.swift in Sources */,
 				F4CB212120D2F70D004B12EE /* EpisodeTableViewCell.swift in Sources */,
+				F4801DC720DB381200A3F2A5 /* ArtworkTableViewCell.swift in Sources */,
 				F442E9DB2092B5FD00784053 /* Series.swift in Sources */,
 				F49D526020C8BDB9008CC1FE /* Language.swift in Sources */,
 				F4F851CE20928481003591AC /* SeriesTableViewCell.swift in Sources */,
+				F4801DC920DB3F3200A3F2A5 /* ArtworkModelController.swift in Sources */,
 				F429102A2095321300F45336 /* LoginViewController.swift in Sources */,
+				F4801DCB20DC3D8200A3F2A5 /* Artwork.swift in Sources */,
 				F482ACA620D01E4C0056B23C /* MovieModelController.swift in Sources */,
 				F432C0772092D7A000876291 /* DateLogicController.swift in Sources */,
 				F4F851CA20927EF2003591AC /* TelevisionModelController.swift in Sources */,

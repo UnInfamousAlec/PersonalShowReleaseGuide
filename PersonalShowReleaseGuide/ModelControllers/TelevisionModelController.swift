@@ -49,7 +49,7 @@ class TelevisionModelController {
             if let data = data {
                 do {
                     let jsonDecoder = JSONDecoder()
-                    let searchedDictionary = try jsonDecoder.decode(SearchedDictionary.self, from: data)
+                    let searchedDictionary = try jsonDecoder.decode(SeriesResults.self, from: data)
                     let seriesIDs = searchedDictionary.results.map( {$0.ID} )
                     self.seriesIDs = seriesIDs
                     completion(true)
@@ -168,33 +168,33 @@ class TelevisionModelController {
     }
     
     func fetchSeriesPoster(forSeries series: Series, completion: @escaping(Bool) -> Void) {
-        
-        let beginPointPosterURL = "https://image.tmdb.org/t/p/"
-        let midPointSizePosterURL = "w500"
-        guard let endPointPosterURL = series.posterEndPoint else { return }
-        
-        let posterURL = URL(string: beginPointPosterURL + midPointSizePosterURL + endPointPosterURL)!
-        print(posterURL)
-        
-        URLSession.shared.dataTask(with: posterURL) { (data, response, error) in
-            
-            if let error = error {
-                print("Error with poster fetch request: \(posterURL) | \(error) - \(error.localizedDescription)"); print("\n")
-                completion(false)
-                return
-            }
-            
-            if let response = response {
-                print("TMDB Poster Response: \(response)\n")
-                completion(false)
-            }
-            
-            if let data = data {
-                let poster = UIImage(data: data)
-                series.posterImage = poster
-                completion(true)
-            }
-        }.resume()
+//
+//        let beginPointPosterURL = "https://image.tmdb.org/t/p/"
+//        let midPointSizePosterURL = "w500"
+//        guard let endPointPosterURL = series.posterEndPoint else { return }
+//
+//        let posterURL = URL(string: beginPointPosterURL + midPointSizePosterURL + endPointPosterURL)!
+//        print(posterURL)
+//
+//        URLSession.shared.dataTask(with: posterURL) { (data, response, error) in
+//
+//            if let error = error {
+//                print("Error with poster fetch request: \(posterURL) | \(error) - \(error.localizedDescription)"); print("\n")
+//                completion(false)
+//                return
+//            }
+//
+//            if let response = response {
+//                print("TMDB Poster Response: \(response)\n")
+//                completion(false)
+//            }
+//
+//            if let data = data {
+//                let poster = UIImage(data: data)
+//                series.posterImage = poster
+//                completion(true)
+//            }
+//        }.resume()
     }
     
     func fetchSeriesPoster1(withSeriesID seriesID: Int, completion: @escaping(Bool) -> Void) {

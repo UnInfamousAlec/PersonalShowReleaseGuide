@@ -9,11 +9,11 @@
 import UIKit
 
 // Based on https://api.themoviedb.org/3/search/tv?api_key=1f76e7734a01ecc55ff5054b1d2a3e82&query=suits&language=en-US
-struct SearchedDictionary: Decodable {
-    let results: [SeriesResults]
+struct SeriesResults: Decodable { // Change to SeriesResults
+    let results: [SeriesDictionary]
 }
 
-struct SeriesResults: Decodable {
+struct SeriesDictionary: Decodable { // Change to SeriesDictionary
     let ID: Int
     var series: [Series]?
     

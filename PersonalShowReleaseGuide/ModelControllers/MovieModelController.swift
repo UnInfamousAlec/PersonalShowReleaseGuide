@@ -6,7 +6,7 @@
 //  Copyright © 2018 UnInfamous Games. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 class MovieModelController {
     
@@ -29,20 +29,20 @@ class MovieModelController {
         let queries = ["query" : searchTerm, "api_key" : "1f76e7734a01ecc55ff5054b1d2a3e82", "language" : "\(self.selectedLanguage)-\(self.selectedCountry)", "include_adult" : "\(adultContent)" , "page" : "\(pageNumber)"]
         
         let movieURL = baseURL.withQueries(queries)!
-        print("Movie Search URL: \(movieURL)")
+        print("\nMovie Search URL: \(movieURL)")
         
         URLSession.shared.dataTask(with: movieURL) { (data, response, error) in
             
             if let error = error {
-                print("Error fetching Movie: \(searchTerm) | \(error)")
+                print("Error fetching Movie: \(movieURL) | \(error)")
                 completion(false)
                 return
             }
             
-            if let response = response {
-                print("TMDB Response: \(response)")
-                completion(false)
-            }
+//            if let response = response {
+//                print("\nTMDB Response: \(movieURL) | \(response)")
+//                completion(false)
+//            }
             
             if let data = data {
                 do {
@@ -62,5 +62,38 @@ class MovieModelController {
                 }
             }
         }.resume()
+    }
+    
+    func fetchPoster(completion: @escaping(Bool) -> Void) {
+        
+        for movie in self.movies {
+            guard let endURL = movie.posterEndPoint else { return }
+            
+            let baseURL = "https://image.tmdb.org/t/p/"
+            let midURL = "w500"
+            
+            let moviePosterURL = URL(string: baseURL + midURL + endURL)!
+            print(moviePosterURL)
+            
+            URLSession.shared.dataTask(with: moviePosterURL) { (data, response, error) in
+                
+                if let error = error {
+                    print("Error fetching movie poster: \(error) - \(error.localizedDescription)")
+                    completion(false)
+                    return
+                }
+                
+//                if let response = response {
+//                    print("TMDB Response: \(moviePosterURL) | \(response)")
+//                    completion(false)
+//                }
+            
+                if let data = data {
+                    let poster = UIImage(data: data)
+                    movie.posterImage = poster
+                    completion(true)
+                }
+            }.resume()
+        }
     }
 }

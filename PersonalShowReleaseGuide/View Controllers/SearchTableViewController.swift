@@ -19,6 +19,7 @@ class SearchTableViewController: UIViewController, UITableViewDataSource, UITabl
     
     
     // MARK: - Properties
+    var hasSearched = false
     var seriesIDsUsed = [Int]()
     
     
@@ -35,26 +36,107 @@ class SearchTableViewController: UIViewController, UITableViewDataSource, UITabl
         showSegmentedControl.layer.borderWidth = 1
         showSearchBar.text = "how" // For Mock purposes
         
-        navigationController?.hidesBarsOnSwipe = true
+        navigationController?.hidesBarsOnSwipe = true // Not working now that it's a view controller
         showTableView.keyboardDismissMode = .onDrag
+        
+        fetchArtwork()
     }
     
     
     // MARK: - Methods
+    func fetchArtwork() {
+        if showSegmentedControl.selectedSegmentIndex == 0 {
+            ArtworkModelController.shared.fetchPopularOrUpcomingPosters(forContentType: "tv/popular") { (success) in
+                
+                if success {
+                    let seriesArtwork = ArtworkModelController.shared.seriesPosters
+                    
+                    for series in seriesArtwork {
+                        ArtworkModelController.shared.fetchPosterImages(forShow: series, completion: { (success) in
+                            
+                            if success {
+                                DispatchQueue.main.async {
+                                    ArtworkModelController.shared.seriesPosters.sort(by: {$0.popularity > $1.popularity} )
+                                    //                                ArtworkModelController.shared.seriesPosters.forEach{ print($0.posterEndPoint ?? "", $0.popularity) }
+                                    self.showTableView.reloadData()
+                                }
+                            }
+                            
+                            if !success {
+                                print("Error fetching series artwork posters")
+                            }
+                        })
+                    }
+                }
+                
+                if !success {
+                    print("Error fetching series artwork")
+                }
+            }
+        } else if showSegmentedControl.selectedSegmentIndex == 1 {
+            ArtworkModelController.shared.fetchPopularOrUpcomingPosters(forContentType: "movie/upcoming") { (success) in
+                
+                if success {
+                    let movieArtwork = ArtworkModelController.shared.moviePosters
+                    
+                    for movie in movieArtwork {
+                        ArtworkModelController.shared.fetchPosterImages(forShow: movie, completion: { (success) in
+                            
+                            if success {
+                                DispatchQueue.main.async {
+                                    ArtworkModelController.shared.moviePosters.sort(by: {$0.popularity > $1.popularity} )
+                                    //                                ArtworkModelController.shared.moviePosters.forEach{ print($0.posterEndPoint ?? "", $0.popularity) }
+                                    self.showTableView.reloadData()
+                                }
+                            }
+                            
+                            if !success {
+                                print("Error getching movie artwork posters")
+                            }
+                        })
+                    }
+                }
+                
+                if !success {
+                    print("Error fetching movies artwork")
+                }
+            }
+        }
+    }
+    
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
         guard let searchTerm = searchBar.text, searchTerm.count > 0 else { return }
         
         searchBar.resignFirstResponder()
+        self.hasSearched = true
         
-        let rows = TelevisionModelController.shared.entireSeries.count
+        if showSegmentedControl.selectedSegmentIndex == 0 {
+            print(ArtworkModelController.shared.seriesPosters.count)
+            print(ArtworkModelController.shared.moviePosters.count)
+            print(TelevisionModelController.shared.entireSeries.count)
+            print(MovieModelController.shared.movies.count)
+            
+            self.clearDataFromSeries()
+            self.clearDataFromMovies()
+            self.clearDataFromSeriesArtwork()
+            self.clearDataFromMoviesArtwork()
+            
+            fetchSeries(withSearchTerm: searchTerm)
+            
+        } else if showSegmentedControl.selectedSegmentIndex == 1 {
+            self.clearDataFromMovies()
+            self.clearDataFromMoviesArtwork()
+            fetchMovies(withSearchTerm: searchTerm)
+        }
         
-        self.seriesIDsUsed.removeAll()
-        TelevisionModelController.shared.entireSeries.removeAll()
-        showTableView.deleteRows(at: (0..<rows).map({ (i) in IndexPath(row: i, section: 0)}), with: .automatic)
-        
+        searchBar.text = ""
+    }
+    
+    func fetchSeries(withSearchTerm searchTerm: String) {
         TelevisionModelController.shared.fetchSeriesIDs(by: searchTerm) { (success) in
-
+            
             if success {
                 let seriesIDs = TelevisionModelController.shared.seriesIDs
                 for seriesID in seriesIDs {
@@ -83,16 +165,14 @@ class SearchTableViewController: UIViewController, UITableViewDataSource, UITabl
                                     if self.seriesIDsUsed.count == TelevisionModelController.shared.entireSeries.count {
                                         
                                         DispatchQueue.main.async {
-                                            searchBar.text = ""
                                             TelevisionModelController.shared.entireSeries.sort(by: {$0.popularity > $1.popularity} )
-                                            TelevisionModelController.shared.entireSeries.forEach{ print($0.name, $0.popularity) }
+//                                            TelevisionModelController.shared.entireSeries.forEach{ print($0.name, $0.popularity) }
                                             self.showTableView.reloadData()
                                         }
                                     }
                                 }
                                 
                                 if !success {
-                                    self.networkAlert()
                                     print("Error fetching episodes: \(Error.self)")
                                 }
                             })
@@ -113,6 +193,35 @@ class SearchTableViewController: UIViewController, UITableViewDataSource, UITabl
         }
     }
     
+    func fetchMovies(withSearchTerm searchTerm: String) {
+        MovieModelController.shared.fetchMovies(searchTerm: searchTerm) { (success) in
+            if success {
+                
+                MovieModelController.shared.fetchPoster(completion: { (success) in
+                    
+                    if success {
+                        
+                        DispatchQueue.main.async {
+                            MovieModelController.shared.movies.sort(by: {$0.releaseDate > $1.releaseDate})
+//                            MovieModelController.shared.movies.forEach{ print($0.name, $0.releaseDate) }
+                            self.showTableView.reloadData()
+                        }
+                    }
+                    
+                    if !success {
+                        self.networkAlert()
+                        print("Error fetching movie posters: \(Error.self)")
+                    }
+                })
+            }
+            
+            if !success {
+                self.networkAlert()
+                print("Error fetching movies: \(Error.self)")
+            }
+        }
+    }
+    
     func networkAlert() {
         let alertController = UIAlertController(title: "Network Error", message: "Please check your network connection and try again", preferredStyle: .alert)
         let dismissAction = UIAlertAction(title: "Dismiss", style: .cancel, handler: nil)
@@ -129,35 +238,162 @@ class SearchTableViewController: UIViewController, UITableViewDataSource, UITabl
         alertController.addAction(settingsAction)
         present(alertController, animated: true)
     }
-
-
-    // Tableview datasource
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if showSegmentedControl.selectedSegmentIndex == 0 {
-            return 80
+    
+    func clearDataFromSeriesArtwork() {
+        let seriesRows = ArtworkModelController.shared.seriesPosters.count
+        ArtworkModelController.shared.seriesPosters.removeAll()
+        if seriesRows == 0 {
+            return
         } else {
-            return 125
+            showTableView.deleteRows(at: (0..<seriesRows).map({ (row) in IndexPath(row: row, section: 0)}), with: .automatic)
+            self.showTableView.setContentOffset(.zero, animated: true)
         }
     }
     
+    func clearDataFromMoviesArtwork() {
+        let moviesRows = ArtworkModelController.shared.moviePosters.count
+        ArtworkModelController.shared.moviePosters.removeAll()
+        if moviesRows == 0 {
+            return
+        } else {
+            showTableView.deleteRows(at: (0..<moviesRows).map({ (row) in IndexPath(row: row, section: 0)}), with: .automatic)
+            self.showTableView.setContentOffset(.zero, animated: true)
+        }
+    }
+    
+    func clearDataFromSeries() {
+        let seriesRows = TelevisionModelController.shared.entireSeries.count
+        TelevisionModelController.shared.entireSeries.removeAll()
+        self.seriesIDsUsed.removeAll()
+        if seriesRows == 0 {
+            return
+        } else {
+            showTableView.deleteRows(at: (0..<seriesRows).map({ (row) in IndexPath(row: row, section: 0)}), with: .left)
+            self.showTableView.setContentOffset(.zero, animated: true)
+        }
+    }
+    
+    func clearDataFromMovies() {
+        let movieRows = MovieModelController.shared.movies.count
+        MovieModelController.shared.movies.removeAll()
+        if movieRows == 0 {
+            return
+        } else {
+            showTableView.deleteRows(at: (0..<movieRows).map({ (row) in IndexPath(row: row, section: 0)}), with: .left)
+            self.showTableView.setContentOffset(.zero, animated: true)
+        }
+    }
+
+    // Tableview datasource
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        if hasSearched == false {
+            return 600
+        }
+        
+        if hasSearched == true {
+            switch showSegmentedControl.selectedSegmentIndex {
+            case 0: return 80
+            case 1: return 125
+            default: return 50
+            }
+        }
+        return 200
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return TelevisionModelController.shared.entireSeries.count
+        if hasSearched == false {
+            switch showSegmentedControl.selectedSegmentIndex {
+            case 0: return ArtworkModelController.shared.seriesPosters.count
+            case 1: return ArtworkModelController.shared.moviePosters.count
+            default: return 0
+            }
+        }
+        
+        if hasSearched == true {
+            switch showSegmentedControl.selectedSegmentIndex {
+            case 0: return TelevisionModelController.shared.entireSeries.count
+            case 1: return MovieModelController.shared.movies.count
+            default: return 0
+            }
+        }
+        return 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "seriesCell", for: indexPath) as? SeriesTableViewCell else { return UITableViewCell() }
         
-        let series = TelevisionModelController.shared.entireSeries[indexPath.row]
-        cell.series = series
-        cell.alpha = 0
+        if hasSearched == false {
+            switch showSegmentedControl.selectedSegmentIndex {
+            case 0:
+                guard let artworkCell = tableView.dequeueReusableCell(withIdentifier: "artworkCell", for: indexPath) as? ArtworkTableViewCell else { return UITableViewCell() }
+                let artwork = ArtworkModelController.shared.seriesPosters[indexPath.row]
+                artworkCell.artwork = artwork
+                return artworkCell
+                
+            case 1:
+                guard let artworkCell = tableView.dequeueReusableCell(withIdentifier: "artworkCell", for: indexPath) as? ArtworkTableViewCell else { return UITableViewCell() }
+                let artwork = ArtworkModelController.shared.moviePosters[indexPath.row]
+                artworkCell.artwork = artwork
+                return artworkCell
+                
+            default: return UITableViewCell()
+            }
+        }
         
-        UIView.animate(withDuration: 0.75, animations:{ cell.alpha = 1} )
-        return cell
+        if hasSearched == true {
+            switch showSegmentedControl.selectedSegmentIndex {
+            case 0:
+                guard let seriesCell = tableView.dequeueReusableCell(withIdentifier: "seriesCell", for: indexPath) as? SeriesTableViewCell else { return UITableViewCell() }
+                let series = TelevisionModelController.shared.entireSeries[indexPath.row]
+                seriesCell.series = series
+                seriesCell.alpha = 0
+                UIView.animate(withDuration: 0.75, animations: { seriesCell.alpha = 1})
+                return seriesCell
+                
+            case 1:
+                guard let movieCell = tableView.dequeueReusableCell(withIdentifier: "movieCell", for: indexPath) as? MovieTableViewCell else { return UITableViewCell() }
+                
+                let movie = MovieModelController.shared.movies[indexPath.row]
+                movieCell.movie = movie
+                movieCell.alpha = 0
+                UIView.animate(withDuration: 0.75, animations: { movieCell.alpha = 1})
+                return movieCell
+                
+            default: return UITableViewCell()
+            }
+        }
+        return UITableViewCell()
+    }
+    
+    
+    // MARK: - Actions
+    @IBAction func showSegmentedControlChanged(_ sender: UISegmentedControl) {
+        
+//        showTableView.keyboardDismissMode = .onDrag
+        
+        if showSegmentedControl.selectedSegmentIndex == 1 {
+            
+            self.clearDataFromSeries()
+            self.clearDataFromSeriesArtwork()
+            self.hasSearched = false
+            fetchArtwork()
+            navigationItem.title = "Movie Search"
+            showSearchBar.placeholder = "Enter Movie Name"
+            
+            
+        } else if showSegmentedControl.selectedSegmentIndex == 0 {
+            
+            self.clearDataFromMovies()
+            self.clearDataFromMoviesArtwork()
+            self.hasSearched = false
+            fetchArtwork()
+            navigationItem.title = "TV Series' Search"
+            showSearchBar.placeholder = "Enter Series Name"
+        }
     }
     
     
     // MARK: - Navigation
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "fromSeriesToDetailVC" {
             guard let detailVC = segue.destination as? SearchDetailViewController else { return }
@@ -166,14 +402,6 @@ class SearchTableViewController: UIViewController, UITableViewDataSource, UITabl
             detailVC.series = selectedSeries
         }
     }
-    
-//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let searchDetailSB = UIStoryboard(name: "Main", bundle: .main)
-//        let searchDetailVC = searchDetailSB.instantiateViewController(withIdentifier: "SearchDetailVC") as! SearchDetailViewController
-//        let selectedSeries = TelevisionModelController.shared.entireSeries[indexPath.row]
-//        searchDetailVC.series = selectedSeries
-//        navigationController?.pushViewController(searchDetailVC, animated: true)
-//    }
 }
 
 //// Change color on a label
