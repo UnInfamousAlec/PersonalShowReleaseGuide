@@ -39,10 +39,10 @@ class ArtworkModelController {
                 return
             }
             
-            //            if let response = response {
-            //                print("\nTMDB Response: \(movieURL) | \(response)")
-            //                completion(false)
-            //            }
+//            if let response = response {
+//                print("\nTMDB Response: \(popularOrUpcomingURL) | \(response)")
+//                completion(false)
+//            }
             
             if let data = data {
                 do {
@@ -71,7 +71,10 @@ class ArtworkModelController {
     func fetchPosterImages(forShow show: Artwork, completion: @escaping(Bool) -> Void) {
         
         let basePosterURL = "https://image.tmdb.org/t/p/original"
-        guard let imageEndPoint = show.posterEndPoint else { return }
+        guard let imageEndPoint = show.posterEndPoint else {
+            show.posterImage = #imageLiteral(resourceName: "ImageNotAvailable")
+            return
+        }
         
         let popularOrUpcomingPosterURL = URL(string: basePosterURL + imageEndPoint)!
         print("Poster Image URL: \(popularOrUpcomingPosterURL)")

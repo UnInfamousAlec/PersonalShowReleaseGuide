@@ -34,7 +34,6 @@ class SearchTableViewController: UIViewController, UITableViewDataSource, UITabl
         DateLogicController.shared.currentDate()
         showSegmentedControl.layer.cornerRadius = 0
         showSegmentedControl.layer.borderWidth = 1
-        showSearchBar.text = "how" // For Mock purposes
         
         navigationController?.hidesBarsOnSwipe = true // Not working now that it's a view controller
         showTableView.keyboardDismissMode = .onDrag
@@ -173,21 +172,21 @@ class SearchTableViewController: UIViewController, UITableViewDataSource, UITabl
                                 }
                                 
                                 if !success {
-                                    print("Error fetching episodes: \(Error.self)")
+                                    print("Error fetching episodes)")
                                 }
                             })
                         }
                         
-                        if !success {
+                        if !success { //Erroring out
                             self.networkAlert()
-                            print("Error fetching seasons: \(Error.self)")
+                            print("Error fetching seasons)")
                         }
                     })
                 }
                 
                 if !success {
                     self.networkAlert()
-                    print("Error fetching shows: \(Error.self)")
+                    print("Error fetching shows)")
                 }
             }
         }

@@ -202,6 +202,11 @@ class TelevisionModelController {
         for series in self.entireSeries {
             if series.ID == seriesID {
                 
+                if series.posterEndPoint == nil {
+                    series.posterImage = #imageLiteral(resourceName: "ImageNotAvailable")
+                    return
+                }
+                
                 let beginPointPosterURL = "https://image.tmdb.org/t/p/"
                 let midPointSizePosterURL = "w500"
                 guard let endPointPosterURL = series.posterEndPoint else { return }

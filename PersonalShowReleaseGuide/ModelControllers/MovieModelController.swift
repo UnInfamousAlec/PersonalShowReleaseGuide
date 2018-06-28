@@ -67,7 +67,12 @@ class MovieModelController {
     func fetchPoster(completion: @escaping(Bool) -> Void) {
         
         for movie in self.movies {
-            guard let endURL = movie.posterEndPoint else { return }
+            
+            guard let endURL = movie.posterEndPoint else {
+                movie.posterImage = #imageLiteral(resourceName: "ImageNotAvailable")
+                continue
+                
+            }
             
             let baseURL = "https://image.tmdb.org/t/p/"
             let midURL = "w500"

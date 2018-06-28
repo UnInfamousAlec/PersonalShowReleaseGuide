@@ -66,12 +66,13 @@ class SearchDetailViewController: UIViewController, UITableViewDataSource, UITab
     
 //     MARK: - Datasource Methods
     func numberOfSections(in tableView: UITableView) -> Int {
-        return series?.seasonCount ?? 1 // Fix later
+//        return series?.seasonCount ?? 1 // This was putting all sections out duplicating the episodes for as many seasons as there were.
+        return 1
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 125
-    }
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return 125
+//    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let series = series else { return 0 }
@@ -80,7 +81,7 @@ class SearchDetailViewController: UIViewController, UITableViewDataSource, UITab
         return episodes.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { // This is adding more episodes when scrolling happens
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "episodeCell", for: indexPath) as? EpisodeTableViewCell else { return UITableViewCell() }
         guard let series = series else { return UITableViewCell() }
         let season = self.drillToSeason(with: series)

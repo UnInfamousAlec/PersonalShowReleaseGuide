@@ -18,6 +18,7 @@ class MovieTableViewCell: UITableViewCell {
     
     
     // MARK: - Properties
+    let dateFormat = "MMMM dd, YYYY"
     var movie: Movie? {
         didSet {
             updateMovie()
@@ -28,10 +29,11 @@ class MovieTableViewCell: UITableViewCell {
     // MARK: - Methods
     func updateMovie() {
         guard let movie = movie else { return }
+        guard let formattedReleaseDate = DateLogicController.shared.formatAirDate(withFormat: self.dateFormat, forDate: movie.releaseDate) else { return }
         
         moviePosterImageView.image = movie.posterImage
         movieNameLabel.text = movie.name
-        movieAirDateLabel.text = movie.releaseDate
+        movieAirDateLabel.text = formattedReleaseDate // Double check
         movieOverviewLabel.text = movie.overview
     }
 }

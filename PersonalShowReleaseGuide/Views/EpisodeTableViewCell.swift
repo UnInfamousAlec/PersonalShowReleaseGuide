@@ -15,9 +15,11 @@ class EpisodeTableViewCell: UITableViewCell {
     @IBOutlet weak var episodeNameLabel: UILabel!
     @IBOutlet weak var episodeAirDateLabel: UILabel!
     @IBOutlet weak var episodeOverviewLabel: UILabel!
+    @IBOutlet weak var episodeOverviewButton: UIButton!
     
     
     // MARK: - Properties
+    let dateFormat = "MMMM dd, YYYY"
     var episode: Episode? {
         didSet {
             updateEpisode()
@@ -25,12 +27,31 @@ class EpisodeTableViewCell: UITableViewCell {
     }
     
     
+    // MARK: - Lifecycle
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        //Remove data from cells
+    }
+    
+    
     // MARK: - Methods
     func updateEpisode() {
         guard let episode = episode else { return }
+        guard let episodeAirDate = episode.episodeAirDate else { return }
+        guard let formattedAirDate = DateLogicController.shared.formatAirDate(withFormat: self.dateFormat, forDate: episodeAirDate) else { return }
+        
         episodeNumberLabel.text = "Episode \(episode.episodeNumber)"
         episodeNameLabel.text = episode.episodeName
-        episodeAirDateLabel.text = episode.episodeAirDate
+        episodeAirDateLabel.text = formattedAirDate // check to see it works
         episodeOverviewLabel.text = episode.episodeOverview
+        episodeOverviewButton.isHidden = true
     }
+    
+    // MARK: - Actions
+    @IBAction func episodeOverviewButtonTapped(_ sender: UIButton) {
+//        episodeOverviewLabel.isHidden = false
+//        episodeOverviewButton.isHidden = true
+    }
+    
 }
